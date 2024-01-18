@@ -12,6 +12,7 @@ export class Simulation {
     generation: number;
 
     statistics: Statistics;
+    positions: bigint[];
 
     constructor(width: number, height: number, livingCells: Array<[number, number]>) {
         this.generation = 0;
@@ -20,6 +21,7 @@ export class Simulation {
         this.gridHeight = height;
         this.cells = [];
         this.initializeCells(livingCells);
+        this.positions = [];
 
         this.cellNeighbors = new Map();
         this.cells.forEach((cell) => {
@@ -28,6 +30,8 @@ export class Simulation {
 
         this.statistics = {};
         this.calculateStatistics();
+        const currentPosition = this.calculatePosition();
+        this.positions.push(currentPosition);
     }
 
     private initializeCells(livingCells: Array<[number, number]>) {
@@ -49,7 +53,15 @@ export class Simulation {
     }
     moveNextGen() {
         this.cells.forEach(this.moveCellNextGen.bind(this));
-        ++this.generation;
+        this.generation += 1;
+
+        const currentPosition = this.calculatePosition();
+        this.positions.push(currentPosition);
+    }
+
+    private calculatePosition() {
+        const bitRepresentation = this.cells.map((cell) => cell.currentGeneration.alive ? '1' : '0').join("");
+        return BigInt(`0b${bitRepresentation}`);
     }
 
     private calculateStatistics() {

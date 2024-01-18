@@ -11,6 +11,12 @@ function step() {
   simulation.moveNextGen();
 
   drawSimulation();
+  const currentPosition = simulation.positions.at(-1)!;
+  const existingPositionIndex = simulation.positions.indexOf(currentPosition);
+  if (existingPositionIndex != -1 && existingPositionIndex != simulation.positions.length - 1) {
+    // if it exists and the first position isnt the current position
+    console.log("loop found")
+  }
 }
 function exportSimulationData() {
   writeSpreadSheet(simulation.statistics, 'export_simulation');
