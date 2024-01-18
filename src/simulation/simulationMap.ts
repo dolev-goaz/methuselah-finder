@@ -1,5 +1,6 @@
 import { Cell, drawCell } from "./cell";
 import config from "../config.json";
+import { Simulation, Statistics } from "./simulation";
 
 export class SimulationMap {
 
@@ -39,10 +40,19 @@ export class SimulationMap {
         return this.cellSizeMultiplier * config.CellSize.Multiplier;
     }
 
-    draw(cells: Cell[], generation: number = 0) {
+    draw(simulation: Simulation) {
         this.clear();
-        cells.forEach(this.drawCell.bind(this));
-        this.generationHeader.innerText = `Generation ${generation}`;
+        simulation.cells.forEach(this.drawCell.bind(this));
+        this.generationHeader.innerText = `Generation ${simulation.generation}`;
+        this.drawStatistics(simulation.statistics);
+    }
+
+    private drawStatistics(statistics: Statistics) {
+        const text = Object.entries(statistics).map(([key, value]) => `${key}: ${value}.`).join('\n')
+        const statisticsContainer = document.querySelector<HTMLDivElement>('#statistics-container')!;
+        statisticsContainer.hidden = false;
+        const statisticsData = statisticsContainer.querySelector<HTMLParagraphElement>('p#statistics')!;
+        statisticsData.innerText = text ||`Empty Statistics`;
     }
 
     clear() {

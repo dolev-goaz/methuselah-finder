@@ -34,7 +34,7 @@ function createSimulation() {
   const map = new SimulationMap();
 
   const draw = () => {
-    map.draw(simulation.cells, simulation.generation);
+    map.draw(simulation);
   }
   draw();
   return {

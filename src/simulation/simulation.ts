@@ -1,11 +1,6 @@
 import { Cell, GenerationData, createCell } from "./cell";
 
-type Statistic = {
-    set: number[];
-    mean: number;
-    stdDeviation: number;
-}
-export type Statistics = Record<string, Statistic>;
+export type Statistics = Record<string, string | number>;
 
 export class Simulation {
     cellNeighbors: Map<Cell, Cell[]>; // this is by reference so its fine
@@ -31,7 +26,7 @@ export class Simulation {
             this.cellNeighbors.set(cell, this.getNeighbors(cell));
         });
 
-        this.statistics = this.initializeStatistics();
+        this.statistics = {};
         this.calculateStatistics();
     }
 
@@ -50,24 +45,15 @@ export class Simulation {
 
     calcNextGen() {
         this.cells.forEach(this.calculateCellNextGen.bind(this));
+        this.calculateStatistics();
     }
     moveNextGen() {
         this.cells.forEach(this.moveCellNextGen.bind(this));
-
         ++this.generation;
-        this.calculateStatistics();
-    }
-
-    private initializeStatistics() {
-        return {}
     }
 
     private calculateStatistics() {
-
-        const statisticsContainer = document.querySelector<HTMLDivElement>('#statistics-container')!;
-        statisticsContainer.hidden = false;
-        const statisticsData = statisticsContainer.querySelector<HTMLParagraphElement>('p#statistics')!;
-        statisticsData.innerText = `Statistics Placeholder`;
+        this.statistics['Max Size'] = 20;
     }
 
     private moveCellNextGen(cell: Cell) {
