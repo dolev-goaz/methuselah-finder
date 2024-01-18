@@ -11,9 +11,11 @@ function step() {
   simulation.moveNextGen();
 
   drawSimulation();
-  const currentPosition = simulation.positions.at(-1)!;
+
+  const lastPositionIndex = simulation.positions.length - 1;
+  const currentPosition = simulation.positions[lastPositionIndex];
   const existingPositionIndex = simulation.positions.indexOf(currentPosition);
-  if (existingPositionIndex != -1 && existingPositionIndex != simulation.positions.length - 1) {
+  if (existingPositionIndex != -1 && existingPositionIndex != lastPositionIndex) {
     // if it exists and the first position isnt the current position
     console.log("loop found")
   }
@@ -35,7 +37,7 @@ function createSimulation() {
   const simulation = new Simulation(
     config.CellsInRow,
     config.CellsInColumn,
-    config.InitialCells[0] as Array<[number, number]>
+    config.InitialCells[2] as Array<[number, number]>
   );
   const map = new SimulationMap();
 
