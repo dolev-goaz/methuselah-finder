@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="stylesheet" href="style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + TS</title>
+  </head>
+  <body>
+    <nav>
+      <button type="button" id="export-excel">Export To Excel</button>
+      <label for="grid-size">Grid Size</label>
+      <input step="1" id="grid-size" type="range" title="grid side" />
+    </nav>
+    <main>
+      <div id="simulation-map">
+        <header id="generation-header"></header>
+        <canvas></canvas>
+        <p id="tooltip">
+          <span id="tooltip-header">Debug Info</span>
+          <span id="tooltip-data"></span>
+        </p>
+      </div>
+      <div id="statistics-container" hidden>
+        <header>Statistics</header>
+        <p id="statistics"></p>
+      </div>
+    </main>
+    <footer>
+      <button type="button" id="step" title="step">Next Generation</button>
+      <div class="auto-step">
+        <header>
+          auto step generations
+        </header>
+        <div class="auto-step-controls">
+          <button type="button" id="auto-step-year" title="auto step one year">1 Year</button>
+          <input id="auto-step" type="checkbox" title="auto step generations" />
+          <input id="auto-step-speed" type="range" title="auto step generations speed" />
+          <label for="auto-step-speed"></label>
+        </div>
+      </div>
+    </footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,68 @@
+{
+  "CellSize": {
+    "Min": 3,
+    "Max": 6,
+    "Initial": 5,
+    "Multiplier": 10
+  },
+  "CellsInRow": 15,
+  "CellsInColumn": 15,
+
+  "StepCount": 365,
+
+  "Cloud": {
+    "Lifespan": {
+      "Min": 1,
+      "Max": 4
+    },
+    "FormChance": {
+      "Sea": 0.1
+    }
+  },
+
+  "InitialTemperatures": {
+    "Forest": 20,
+    "City": 27,
+    "Sea": 19,
+    "Land": 23,
+    "Iceberg": -14
+  },
+  "StaticInitialPollution": 0.00,
+  "InitialPollution": {
+    "Forest": 0.05,
+    "City": 0.2,
+    "Sea": 0.01,
+    "Land": 0.15,
+    "Iceberg": 0.01
+  },
+  "Wind": {
+    "InitialForce": {
+      "Min": 1,
+      "Max": 7
+    },
+    "MaxGenerationTemperature": 25,
+    "CreateChance": 0.05
+  },
+  "PollutionPerGeneration": {
+    "Forest": -0.007,
+    "City": 0.004,
+    "Sea": 0,
+    "Land": 0,
+    "Iceberg": 0
+  },
+  "PollutionHeatRatio": 0.6,
+  "PollutionByWindPercent": 0.3,
+  "PollutionByLandPercent": 0.09,
+  "TemperatureByWindPercent": 0.01,
+  "TemperatureByLandPercent": 0.002,
+
+  "CloudShadeMinTemperature": 20,
+  "CloudTemperatureStepRatio": 0.1,
+
+  "RainTemperature": 14,
+  "RainTemperatureStepRatio": 0.1,
+  "Maps": {
+    "0": "SSSSSSSSSSSSSSS\nSLLLSSSSSLCCCSS\nSLCLLSSSSLCCCSS\nSLLFLSSSSLCFCSS\nSSLLLSSSSLCFCSS\nSSSSSSSSLLCFCSS\nSSSSLLFFCLCFCSS\nSFFLLFFCCCCCCSS\nSCLLCCCCCCCCCSS\nSSSSSSSSSSSSSSS\nSSSIIIIIIIIIIIS\nSIIIIIIIIIIIIIS\nSSSSSSSSSSSSIIS\nSSSCFFFCSSSSIIS\nSSSSSSSSSSSSSSS",
+    "Test": "SSSSSSSSSSSSSSS\nSSSIIIIIIIIISSS\nSSSIIIIIIIIISSS\nSSSSSSSSSIIISSS\nSSFFCLSSSIIISSS\nSSFCCLSSSSSSSSS\nSSSSSSSSSSSSSSS\nSSSSLLLLLLLCCSS\nSSSSLFFFLLLCCSS\nSSSSLFFFLLLCCSS\nSSSSLLLLLLLCCSS\nSSSSLCCCCCCCCSS\nSSSSLCCCCCCCCSS\nSSSSLLLLLLLLLSS\nSSSSSSSSSSSSSSS"
+  }
+}
