@@ -1,16 +1,15 @@
 import { Cell, drawCell } from "./cell";
 import config from "../config.json";
 
-export class WorldMap {
-    cells: Cell[];
+export class SimulationMap {
 
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
-    private cellTooltip: HTMLParagraphElement;
 
     private cellSizeMultiplier: number;
+    private generationHeader: HTMLElement;
 
-    constructor(cells: Cell[] = []) {
+    constructor() {
         this.cellSizeMultiplier = config.CellSize.Initial;
         const htmlElements = this.initializeMapHTML();
         if (!htmlElements) {
@@ -18,13 +17,11 @@ export class WorldMap {
             throw new Error("Error");
         }
         this.canvas = htmlElements.canvas;
-        this.cellTooltip = htmlElements.cellTooltip;
+        this.generationHeader = htmlElements.generationHeader;
 
         const ctx = this.canvas.getContext("2d");
         if (!ctx) throw new Error("An error has occured. please refresh");
         this.ctx = ctx;
-
-        this.cells = cells;
     }
 
     setCellSizeMultiplier(multiplier: number) {
@@ -42,33 +39,15 @@ export class WorldMap {
         return this.cellSizeMultiplier * config.CellSize.Multiplier;
     }
 
-    draw() {
+    draw(cells: Cell[], generation: number = 0) {
         this.clear();
-        this.cells.forEach(this.drawCell.bind(this));
-        if (!this.cellTooltip.hidden) this.onCanvasHoverEnd() // info isnt relevant
+        cells.forEach(this.drawCell.bind(this));
+        this.generationHeader.innerText = `Generation ${generation}`;
     }
 
     clear() {
-        this.ctx.fillStyle = 'white';
+        this.ctx.fillStyle = 'lightgray';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    }
-
-    private onCanvasHover(event: MouseEvent) {
-        const x = Math.floor(event.offsetX / this.cellSize);
-        const y = Math.floor(event.offsetY / this.cellSize);
-
-        const cell = this.cells[y * config.CellsInRow + x];
-        const debugData = JSON.stringify(
-            cell,
-            (_, val) => typeof val === 'number'? Number(val.toFixed(3)): val,
-            '\t'
-        );
-        const contentHolder = this.cellTooltip.querySelector<HTMLSpanElement>("span#tooltip-data")!;
-        contentHolder.innerText = debugData;
-        this.cellTooltip.hidden = false;
-    }
-    private onCanvasHoverEnd() {
-        this.cellTooltip.hidden = true;
     }
 
     private initializeMapHTML() {
@@ -78,15 +57,13 @@ export class WorldMap {
         if (!canvas) return;
         canvas.width = this.cellSize * config.CellsInColumn;
         canvas.height = this.cellSize * config.CellsInRow;
-        canvas.onmousemove = this.onCanvasHover.bind(this);
-        canvas.onmouseleave = this.onCanvasHoverEnd.bind(this);
 
-        const cellTooltip = document.querySelector<HTMLParagraphElement>('#tooltip');
-        if (!cellTooltip) return;
+        const generationHeader = document.querySelector<HTMLElement>("header#generation-header")!;
+
 
         return {
             canvas,
-            cellTooltip
+            generationHeader
         };
     }
 }
