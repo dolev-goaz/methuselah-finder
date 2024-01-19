@@ -16,15 +16,15 @@ let simulationWithVisuals: Simulation;
 const simulationMap = new SimulationMap();
 
 async function runSimulation() {
-  const generation = await createGeneration();
-  await runGeneration(generation);
-  const bestSimulation = generation
+  const chromosomes = await createGeneration();
+  const simulations = await runGeneration(chromosomes);
+  const bestSimulation = simulations
     .reduce(
-      (best, current) => best.calculateFitness({ withLimit: true }) > current.calculateFitness({ withLimit: true })
+      (best, current) => best[1] > current[1]
         ? best : current
     );
 
-  simulationWithVisuals = new Simulation(config.CellsInRow, config.CellsInColumn, bestSimulation.chromosome);
+  simulationWithVisuals = new Simulation(config.CellsInRow, config.CellsInColumn, bestSimulation[0]);
   while (!simulationWithVisuals.isStabilized()) {
     if (simulationWithVisuals.generation == config.SimulationMaxSteps) alert("timed out!")
     step();

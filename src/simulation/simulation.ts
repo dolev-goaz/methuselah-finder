@@ -1,3 +1,4 @@
+import { Chromosome, cellsToChromosome, isCellAlive } from "@/genetic/chromosome";
 import { Cell, GenerationData, createCell } from "./cell";
 import config from "@/config.json";
 
@@ -8,7 +9,7 @@ type Size = { Width: number; Height: number; }
 
 export class Simulation {
 
-    chromosome: bigint;
+    chromosome: Chromosome;
 
     cellNeighbors: Map<Cell, Cell[]> = new Map();
 
@@ -19,12 +20,12 @@ export class Simulation {
     generation: number;
 
     statistics: Statistics;
-    states: bigint[] = [];
+    states: Chromosome[] = [];
 
     edges: Edges;
     initialSize: Size;
 
-    constructor(width: number, height: number, chromosome: bigint) {
+    constructor(width: number, height: number, chromosome: Chromosome) {
         this.chromosome = chromosome;
         this.generation = 0;
         this.edges = {};
@@ -85,16 +86,13 @@ export class Simulation {
         return (firstDuplicateStateIndex != -1 && firstDuplicateStateIndex != lastStateIndex);
     }
 
-    private initializeCells(chromosome: bigint) {
+    private initializeCells(chromosome: Chromosome) {
         this.cells.length = 0;
-        let i = 0n;
         for (let yIndex = 0; yIndex < this.gridWidth; ++yIndex) {
             for (let xIndex = 0; xIndex < this.gridHeight; ++xIndex) {
-                const isAlive = Boolean(chromosome & (1n << i));
-                const newCell = createCell(xIndex, yIndex, isAlive);
+                const newCell = createCell(xIndex, yIndex, isCellAlive(chromosome, xIndex, yIndex));
                 this.cells.push(newCell);
                 this.updatePatternEdges(newCell)
-                ++i;
             }
         }
     }
@@ -116,8 +114,7 @@ export class Simulation {
     }
 
     private calculateState() {
-        const bitRepresentation = this.cells.map((cell) => cell.currentGeneration.alive ? '1' : '0').join("");
-        return BigInt(`0b${bitRepresentation}`);
+        return cellsToChromosome(this.cells);
     }
 
     private calculateStatistics() {

@@ -1,4 +1,8 @@
 import config from "@/config.json"
+import { Cell } from "@/simulation/cell";
+
+export type Chromosome = bigint;
+
 export async function generateChromosomeAsync() {
     let chromosome = BigInt(0);
     const chromosomeSize = config.CellsInColumn * config.CellsInRow;
@@ -14,16 +18,14 @@ export async function generateChromosomeAsync() {
 
     return chromosome;
 }
-export function generateChromosome() {
-    let chromosome = BigInt(0);
-    const chromosomeSize = config.CellsInColumn * config.CellsInRow;
 
-    Array.from({ length: chromosomeSize })
-        .forEach((_, index) => {
-            if (Math.random() < config.InitialChromosome.CellLivingChance) {
-                chromosome |= (1n << BigInt(index));
-            }
-        });
+export function isCellAlive(chromosome: Chromosome, positionX: number, positionY: number) {
+    const index = BigInt(positionY * config.CellsInRow + positionX);
 
-    return chromosome;
+    return Boolean(chromosome & (1n << index));
+}
+
+export function cellsToChromosome(cells: Cell[]) {
+    const bitRepresentation = cells.map((cell) => cell.currentGeneration.alive ? '1' : '0').join("");
+    return BigInt(`0b${bitRepresentation}`);
 }
