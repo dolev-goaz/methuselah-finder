@@ -1,7 +1,6 @@
 import { Simulation } from "./simulation/simulation";
 import config from "./config.json";
 import { setupControls } from "./controls";
-import { writeSpreadSheet } from "./spreadsheet";
 import { SimulationMap } from "./simulation/simulationMap";
 import { generateChromosome } from "./genetic/chromosome";
 
@@ -24,15 +23,11 @@ function step() {
   simulation.moveNextGen();
   drawSimulation();
 }
-function exportSimulationData() {
-  writeSpreadSheet(simulation.statistics, 'export_simulation');
-}
 function updateMapSize(cellSize: number) {
   map.setCellSizeMultiplier(cellSize);
   drawSimulation();
 }
 setupControls({
-  spreadSheetExport: exportSimulationData,
   step: step,
   onChangeSize: updateMapSize,
   onChangeSpeed: (ms) => msPerStep = ms,

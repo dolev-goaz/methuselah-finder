@@ -2,14 +2,12 @@ import config from "@/config.json";
 
 type fn<T extends any[] = []> = (...args: T) => void;
 type ControlsData = {
-    spreadSheetExport: fn;
     step: fn;
     onChangeSize: fn<[number]>;
     onChangeSpeed: fn<[number]>;
 }
 
 export function setupControls(options: ControlsData) {
-    createExport(options.spreadSheetExport);
     createLoopControls(options.onChangeSpeed);
     createStepButton(options.step);
     createGridSizeControl(options.onChangeSize);
@@ -23,12 +21,6 @@ function createGridSizeControl(onChange: fn<[number]>) {
     size.oninput = () => {
         onChange(parseInt(size.value));
     }
-}
-
-function createExport(exportMethod: fn) {
-    const button = document.querySelector<HTMLButtonElement>('button#export-excel')
-    if (!button) return;
-    button.onclick = exportMethod;
 }
 
 function createLoopControls(onSpeedChange: fn<[number]>) {
