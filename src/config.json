@@ -7,7 +7,7 @@
   },
   "CellsInRow": 30,
   "CellsInColumn": 30,
-  "SimulationMaxSteps": 200,
+  "SimulationMaxSteps": 400,
 
   "InitialChromosome": {
     "CellLivingChance": 0.4,

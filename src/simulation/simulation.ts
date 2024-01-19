@@ -3,9 +3,10 @@ import { Cell, GenerationData, createCell } from "./cell";
 export type Statistics = Record<string, string | number>;
 
 type Edges = Partial<Record<'top' | 'left' | 'bottom' | 'right', Cell>>;
+type Size = { Width: number; Height: number; }
 
 export class Simulation {
-    cellNeighbors: Map<Cell, Cell[]>; // this is by reference so its fine
+    cellNeighbors: Map<Cell, Cell[]> = new Map();
 
     cells: Cell[];
     gridWidth: number;
@@ -14,9 +15,10 @@ export class Simulation {
     generation: number;
 
     statistics: Statistics;
-    states: bigint[];
+    states: bigint[] = [];
 
     edges: Edges;
+    initialSize: Size;
 
     constructor(width: number, height: number, chromosome: bigint) {
         this.generation = 0;
@@ -26,7 +28,7 @@ export class Simulation {
         this.gridHeight = height;
         this.cells = [];
         this.initializeCells(chromosome);
-        this.states = [];
+        this.initialSize = this.calculateSize();
 
         this.cellNeighbors = new Map();
         this.cells.forEach((cell) => {
@@ -39,18 +41,13 @@ export class Simulation {
         this.calculateStatistics();
     }
 
-    private initializeCells(chromosome: bigint) {
-        this.cells.length = 0;
-        let i = 0n;
-        for (let yIndex = 0; yIndex < this.gridWidth; ++yIndex) {
-            for (let xIndex = 0; xIndex < this.gridHeight; ++xIndex) {
-                const isAlive = Boolean(chromosome & (1n << i));
-                const newCell = createCell(xIndex, yIndex, isAlive);
-                this.cells.push(newCell);
-                this.updatePatternEdges(newCell)
-                ++i;
-            }
-        }
+    calculateFitness() {
+        const currentSize = this.calculateSize();
+        const addedWidth = currentSize.Width - this.initialSize.Width;
+        const addedHeight = currentSize.Height - this.initialSize.Height;
+
+        const fitness = Math.pow(addedWidth + addedHeight, 3) + this.generation;
+        return Math.max(0, fitness);
     }
 
     moveNextGen() {
@@ -76,6 +73,20 @@ export class Simulation {
         return (firstDuplicateStateIndex != -1 && firstDuplicateStateIndex != lastStateIndex);
     }
 
+    private initializeCells(chromosome: bigint) {
+        this.cells.length = 0;
+        let i = 0n;
+        for (let yIndex = 0; yIndex < this.gridWidth; ++yIndex) {
+            for (let xIndex = 0; xIndex < this.gridHeight; ++xIndex) {
+                const isAlive = Boolean(chromosome & (1n << i));
+                const newCell = createCell(xIndex, yIndex, isAlive);
+                this.cells.push(newCell);
+                this.updatePatternEdges(newCell)
+                ++i;
+            }
+        }
+    }
+
     private updatePatternEdges(cell: Cell) {
         if (!cell.currentGeneration.alive) return;
         if (!this.edges.top || (cell.indexY < this.edges.top.indexY)) {
@@ -98,14 +109,22 @@ export class Simulation {
     }
 
     private calculateStatistics() {
+        Object.assign(this.statistics, this.calculateSize());
+        this.statistics.Fitness = this.calculateFitness();
+    }
+
+    private calculateSize() {
+        const size: Size = {
+            Width: 0,
+            Height: 0
+        };
         if (this.states[this.states.length - 1] === 0n) {
             // no cells are alive (all bits are turned off)
-            this.statistics.Width = 0;
-            this.statistics.Height = 0;
-            return;
+            return size;
         }
-        this.statistics.Width = this.edges.right!.indexX - this.edges.left!.indexX + 1;
-        this.statistics.Height = this.edges.bottom!.indexY - this.edges.top!.indexY + 1;
+        size.Width = this.edges.right!.indexX - this.edges.left!.indexX + 1;
+        size.Height = this.edges.bottom!.indexY - this.edges.top!.indexY + 1;
+        return size;
     }
 
     private moveCellNextGen(cell: Cell) {
