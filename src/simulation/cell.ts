@@ -49,4 +49,9 @@ export function drawCell(ctx: CanvasRenderingContext2D, cell: Cell, cellSize: nu
         drawData.drawSize - 2 * cellBorderThickness,
         drawData.drawSize - 2 * cellBorderThickness
     );
+
+
+    // debug
+    // ctx.font = '7px serif';
+    // ctx.strokeText(`(${cell.indexX}, ${cell.indexY})`, drawData.drawX + 2, drawData.drawY + 10);
 }

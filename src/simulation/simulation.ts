@@ -2,6 +2,8 @@ import { Cell, GenerationData, createCell } from "./cell";
 
 export type Statistics = Record<string, string | number>;
 
+type Edges = Partial<Record<'top' | 'left' | 'bottom' | 'right', Cell>>;
+
 export class Simulation {
     cellNeighbors: Map<Cell, Cell[]>; // this is by reference so its fine
 
@@ -14,8 +16,11 @@ export class Simulation {
     statistics: Statistics;
     positions: bigint[];
 
+    edges: Edges;
+
     constructor(width: number, height: number, livingCells: Array<[number, number]>) {
         this.generation = 0;
+        this.edges = {};
 
         this.gridWidth = width;
         this.gridHeight = height;
@@ -29,9 +34,9 @@ export class Simulation {
         });
 
         this.statistics = {};
-        this.calculateStatistics();
         const currentPosition = this.calculatePosition();
         this.positions.push(currentPosition);
+        this.calculateStatistics();
     }
 
     private initializeCells(livingCells: Array<[number, number]>) {
@@ -47,20 +52,41 @@ export class Simulation {
         livingCells.forEach(([x, y]) => {
             const absX = center[0] + x;
             const absY = center[1] + y;
-            this.cells[absY * this.gridWidth + absX].currentGeneration.alive = true;
+            const cell = this.cells[absY * this.gridWidth + absX];
+            cell.currentGeneration.alive = true;
+            this.updatePatternEdges(cell)
         });
     }
 
-    calcNextGen() {
-        this.cells.forEach(this.calculateCellNextGen.bind(this));
-        this.calculateStatistics();
-    }
     moveNextGen() {
-        this.cells.forEach(this.moveCellNextGen.bind(this));
+        this.edges = {};
+
+        this.cells.forEach(this.calculateCellNextGen.bind(this));
+        this.cells.forEach((cell) => {
+            this.moveCellNextGen(cell);
+            this.updatePatternEdges(cell);
+        });
         this.generation += 1;
 
         const currentPosition = this.calculatePosition();
         this.positions.push(currentPosition);
+        this.calculateStatistics();
+    }
+
+    private updatePatternEdges(cell: Cell) {
+        if (!cell.currentGeneration.alive) return;
+        if (!this.edges.top || (cell.indexY < this.edges.top.indexY)) {
+            this.edges.top = cell;
+        }
+        if (!this.edges.bottom || (cell.indexY > this.edges.bottom.indexY)) {
+            this.edges.bottom = cell;
+        }
+        if (!this.edges.left || (cell.indexX < this.edges.left.indexX)) {
+            this.edges.left = cell;
+        }
+        if (!this.edges.right || (cell.indexX > this.edges.right.indexX)) {
+            this.edges.right = cell;
+        }
     }
 
     private calculatePosition() {
@@ -69,7 +95,12 @@ export class Simulation {
     }
 
     private calculateStatistics() {
-        this.statistics['Max Size'] = 20;
+        if (!Object.values(this.edges).every((element) => element)) {
+            // no cells are alive- could also check if current position is 0
+            return;
+        }
+        this.statistics.Width = this.edges.right!.indexX - this.edges.left!.indexX + 1;
+        this.statistics.Height = this.edges.bottom!.indexY - this.edges.top!.indexY + 1;
     }
 
     private moveCellNextGen(cell: Cell) {

@@ -7,7 +7,6 @@ import { SimulationMap } from "./simulation/simulationMap";
 const { simulation, map, drawSimulation } = createSimulation();
 
 function step() {
-  simulation.calcNextGen();
   simulation.moveNextGen();
 
   drawSimulation();
