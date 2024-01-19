@@ -59,8 +59,7 @@ export class Simulation {
         const addedWidth = currentSize.Width - this.initialSize.Width;
         const addedHeight = currentSize.Height - this.initialSize.Height;
 
-        const fitness = Math.pow(addedWidth + addedHeight, 3) + this.generation;
-        return Math.max(0, fitness);
+        return Math.pow(addedWidth + addedHeight, 3) + this.generation;
     }
 
     moveNextGen() {

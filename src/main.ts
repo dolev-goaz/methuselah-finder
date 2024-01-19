@@ -2,7 +2,7 @@ import { Simulation } from "./simulation/simulation";
 import config from "./config.json";
 import { setupControls } from "./controls";
 import { SimulationMap } from "./simulation/simulationMap";
-import { createGeneration, runGeneration } from "./genetic/generation";
+import { createGeneration, crossoverGeneration, runGeneration } from "./genetic/generation";
 
 let msPerStep = 0;
 setupControls({
@@ -16,9 +16,15 @@ let simulationWithVisuals: Simulation;
 const simulationMap = new SimulationMap();
 
 async function runSimulation() {
-  const chromosomes = await createGeneration();
-  const simulations = await runGeneration(chromosomes);
-  const bestSimulation = simulations
+  let generation = await createGeneration();
+  for (let genIndex = 0; genIndex < config.GenerationCount - 1; ++genIndex) {
+    const simulations = await runGeneration(generation);
+    generation = await crossoverGeneration(simulations);
+  }
+
+  const lastGeneration = await runGeneration(generation);
+  
+  const bestSimulation = lastGeneration
     .reduce(
       (best, current) => best[1] > current[1]
         ? best : current

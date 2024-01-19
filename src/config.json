@@ -7,8 +7,11 @@
   },
   "CellsInRow": 30,
   "CellsInColumn": 30,
+
   "SimulationMaxSteps": 400,
-  "GenerationSize": 200,
+  "PopulationSize": 10,
+  "GenerationCount": 15,
+  "MutationChance": 0.4,
 
   "InitialChromosome": {
     "CellLivingChance": 0.4,
