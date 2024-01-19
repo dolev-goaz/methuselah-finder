@@ -6,18 +6,21 @@ import { SimulationMap } from "./simulation/simulationMap";
 
 const { simulation, map, drawSimulation } = createSimulation();
 
+
+let msPerStep = 0;
+
+async function runSimulation() {
+  await sleep(500);
+  while (!simulation.isStabilized() && simulation.generation < config.SimulationMaxSteps) {
+    step();
+    await sleep(msPerStep);
+  }
+}
+runSimulation();
+
 function step() {
   simulation.moveNextGen();
-
   drawSimulation();
-
-  const lastPositionIndex = simulation.positions.length - 1;
-  const currentPosition = simulation.positions[lastPositionIndex];
-  const existingPositionIndex = simulation.positions.indexOf(currentPosition);
-  if (existingPositionIndex != -1 && existingPositionIndex != lastPositionIndex) {
-    // if it exists and the first position isnt the current position
-    console.log("loop found")
-  }
 }
 function exportSimulationData() {
   writeSpreadSheet(simulation.statistics, 'export_simulation');
@@ -29,7 +32,8 @@ function updateMapSize(cellSize: number) {
 setupControls({
   spreadSheetExport: exportSimulationData,
   step: step,
-  onChangeSize: updateMapSize
+  onChangeSize: updateMapSize,
+  onChangeSpeed: (ms) => msPerStep = ms,
 });
 
 function createSimulation() {
@@ -49,4 +53,8 @@ function createSimulation() {
     map,
     drawSimulation: draw
   }
+}
+
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

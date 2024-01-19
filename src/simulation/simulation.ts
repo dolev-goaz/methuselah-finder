@@ -73,6 +73,14 @@ export class Simulation {
         this.calculateStatistics();
     }
 
+    isStabilized() {
+        const lastPositionIndex = this.positions.length - 1;
+        const currentPosition = this.positions[lastPositionIndex];
+        const firstExistingPositionIndex = this.positions.indexOf(currentPosition);
+        // if it exists and the first position isnt the current position
+        return (firstExistingPositionIndex != -1 && firstExistingPositionIndex != lastPositionIndex);
+    }
+
     private updatePatternEdges(cell: Cell) {
         if (!cell.currentGeneration.alive) return;
         if (!this.edges.top || (cell.indexY < this.edges.top.indexY)) {

@@ -7,8 +7,7 @@
   },
   "CellsInRow": 30,
   "CellsInColumn": 30,
-
-  "StepCount": 365,
+  "SimulationMaxSteps": 200,
 
   "TestChromosomes": {
     "0": [
