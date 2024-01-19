@@ -24,12 +24,9 @@ async function runSimulation() {
         ? best : current
     );
 
-  console.log(bestSimulation.calculateFitness({ withLimit: true }), bestSimulation.generation);
-
   simulationWithVisuals = new Simulation(config.CellsInRow, config.CellsInColumn, bestSimulation.chromosome);
-
   while (!simulationWithVisuals.isStabilized()) {
-    if (simulationWithVisuals.generation == config.SimulationMaxSteps) alert("time out!")
+    if (simulationWithVisuals.generation == config.SimulationMaxSteps) alert("timed out!")
     step();
     await sleep(msPerStep);
   }
