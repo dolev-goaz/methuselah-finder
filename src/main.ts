@@ -37,7 +37,7 @@ function createSimulation() {
   const simulation = new Simulation(
     config.CellsInRow,
     config.CellsInColumn,
-    config.InitialCells[2] as Array<[number, number]>
+    config.TestChromosomes[0] as Array<[number, number]>
   );
   const map = new SimulationMap();
 

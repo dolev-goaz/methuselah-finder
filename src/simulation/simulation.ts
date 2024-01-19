@@ -42,8 +42,12 @@ export class Simulation {
             }
         }
 
+        const center = [Math.floor(this.gridWidth / 2), Math.floor(this.gridHeight / 2)] as const;
+
         livingCells.forEach(([x, y]) => {
-            this.cells[y * this.gridWidth + x].currentGeneration.alive = true;
+            const absX = center[0] + x;
+            const absY = center[1] + y;
+            this.cells[absY * this.gridWidth + absX].currentGeneration.alive = true;
         });
     }
 
