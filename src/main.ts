@@ -3,15 +3,17 @@ import config from "./config.json";
 import { setupControls } from "./controls";
 import { writeSpreadSheet } from "./spreadsheet";
 import { SimulationMap } from "./simulation/simulationMap";
+import { generateChromosome } from "./genetic/chromosome";
 
-const { simulation, map, drawSimulation } = createSimulation();
+const chromosome = await generateChromosome();
+const { simulation, map, drawSimulation } = createSimulation(chromosome);
 
 
 let msPerStep = 0;
-
 async function runSimulation() {
   await sleep(500);
-  while (!simulation.isStabilized() && simulation.generation < config.SimulationMaxSteps) {
+  while (!simulation.isStabilized()) {
+    if (simulation.generation == config.SimulationMaxSteps) alert("time out!")
     step();
     await sleep(msPerStep);
   }
@@ -36,11 +38,11 @@ setupControls({
   onChangeSpeed: (ms) => msPerStep = ms,
 });
 
-function createSimulation() {
+function createSimulation(chromosome: bigint) {
   const simulation = new Simulation(
     config.CellsInRow,
     config.CellsInColumn,
-    config.TestChromosomes[0] as Array<[number, number]>
+    chromosome
   );
   const map = new SimulationMap();
 

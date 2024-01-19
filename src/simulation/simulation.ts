@@ -14,19 +14,19 @@ export class Simulation {
     generation: number;
 
     statistics: Statistics;
-    positions: bigint[];
+    states: bigint[];
 
     edges: Edges;
 
-    constructor(width: number, height: number, livingCells: Array<[number, number]>) {
+    constructor(width: number, height: number, chromosome: bigint) {
         this.generation = 0;
         this.edges = {};
 
         this.gridWidth = width;
         this.gridHeight = height;
         this.cells = [];
-        this.initializeCells(livingCells);
-        this.positions = [];
+        this.initializeCells(chromosome);
+        this.states = [];
 
         this.cellNeighbors = new Map();
         this.cells.forEach((cell) => {
@@ -34,28 +34,23 @@ export class Simulation {
         });
 
         this.statistics = {};
-        const currentPosition = this.calculatePosition();
-        this.positions.push(currentPosition);
+        const currentState = this.calculateState();
+        this.states.push(currentState);
         this.calculateStatistics();
     }
 
-    private initializeCells(livingCells: Array<[number, number]>) {
+    private initializeCells(chromosome: bigint) {
         this.cells.length = 0;
+        let i = 0n;
         for (let yIndex = 0; yIndex < this.gridWidth; ++yIndex) {
             for (let xIndex = 0; xIndex < this.gridHeight; ++xIndex) {
-                this.cells.push(createCell(xIndex, yIndex, false));
+                const isAlive = Boolean(chromosome & (1n << i));
+                const newCell = createCell(xIndex, yIndex, isAlive);
+                this.cells.push(newCell);
+                this.updatePatternEdges(newCell)
+                ++i;
             }
         }
-
-        const center = [Math.floor(this.gridWidth / 2), Math.floor(this.gridHeight / 2)] as const;
-
-        livingCells.forEach(([x, y]) => {
-            const absX = center[0] + x;
-            const absY = center[1] + y;
-            const cell = this.cells[absY * this.gridWidth + absX];
-            cell.currentGeneration.alive = true;
-            this.updatePatternEdges(cell)
-        });
     }
 
     moveNextGen() {
@@ -68,17 +63,17 @@ export class Simulation {
         });
         this.generation += 1;
 
-        const currentPosition = this.calculatePosition();
-        this.positions.push(currentPosition);
+        const currentState = this.calculateState();
+        this.states.push(currentState);
         this.calculateStatistics();
     }
 
     isStabilized() {
-        const lastPositionIndex = this.positions.length - 1;
-        const currentPosition = this.positions[lastPositionIndex];
-        const firstExistingPositionIndex = this.positions.indexOf(currentPosition);
-        // if it exists and the first position isnt the current position
-        return (firstExistingPositionIndex != -1 && firstExistingPositionIndex != lastPositionIndex);
+        const lastStateIndex = this.states.length - 1;
+        const currentState = this.states[lastStateIndex];
+        const firstDuplicateStateIndex = this.states.indexOf(currentState);
+        // if it exists and the first state isnt the current state
+        return (firstDuplicateStateIndex != -1 && firstDuplicateStateIndex != lastStateIndex);
     }
 
     private updatePatternEdges(cell: Cell) {
@@ -97,14 +92,16 @@ export class Simulation {
         }
     }
 
-    private calculatePosition() {
+    private calculateState() {
         const bitRepresentation = this.cells.map((cell) => cell.currentGeneration.alive ? '1' : '0').join("");
         return BigInt(`0b${bitRepresentation}`);
     }
 
     private calculateStatistics() {
-        if (!Object.values(this.edges).every((element) => element)) {
-            // no cells are alive- could also check if current position is 0
+        if (this.states[this.states.length - 1] === 0n) {
+            // no cells are alive (all bits are turned off)
+            this.statistics.Width = 0;
+            this.statistics.Height = 0;
             return;
         }
         this.statistics.Width = this.edges.right!.indexX - this.edges.left!.indexX + 1;

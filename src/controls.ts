@@ -32,7 +32,7 @@ function createExport(exportMethod: fn) {
 }
 
 function createLoopControls(onSpeedChange: fn<[number]>) {
-    const initialSliderValue = 2;
+    const initialSliderValue = config.InitialStepsPerSecond;
     let timePerFrame = 1000 / initialSliderValue;
     onSpeedChange(timePerFrame);
 
