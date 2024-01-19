@@ -1,4 +1,5 @@
 import { Cell, GenerationData, createCell } from "./cell";
+import config from "@/config.json";
 
 export type Statistics = Record<string, string | number>;
 
@@ -6,6 +7,9 @@ type Edges = Partial<Record<'top' | 'left' | 'bottom' | 'right', Cell>>;
 type Size = { Width: number; Height: number; }
 
 export class Simulation {
+
+    chromosome: bigint;
+
     cellNeighbors: Map<Cell, Cell[]> = new Map();
 
     cells: Cell[];
@@ -21,6 +25,7 @@ export class Simulation {
     initialSize: Size;
 
     constructor(width: number, height: number, chromosome: bigint) {
+        this.chromosome = chromosome;
         this.generation = 0;
         this.edges = {};
 
@@ -41,7 +46,14 @@ export class Simulation {
         this.calculateStatistics();
     }
 
-    calculateFitness() {
+    runSimulation() {
+        for (let i = 0; !this.isStabilized() && i <= config.SimulationMaxSteps; ++i) {
+            this.moveNextGen();
+        }
+    }
+
+    calculateFitness(options?: { withLimit: boolean }) {
+        if (options?.withLimit && this.generation > config.SimulationMaxSteps) return 0;
         const currentSize = this.calculateSize();
         const addedWidth = currentSize.Width - this.initialSize.Width;
         const addedHeight = currentSize.Height - this.initialSize.Height;

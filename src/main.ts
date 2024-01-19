@@ -2,54 +2,48 @@ import { Simulation } from "./simulation/simulation";
 import config from "./config.json";
 import { setupControls } from "./controls";
 import { SimulationMap } from "./simulation/simulationMap";
-import { generateChromosome } from "./genetic/chromosome";
-
-const chromosome = await generateChromosome();
-const { simulation, map, drawSimulation } = createSimulation(chromosome);
-
+import { createGeneration, runGeneration } from "./genetic/generation";
 
 let msPerStep = 0;
-async function runSimulation() {
-  await sleep(500);
-  while (!simulation.isStabilized()) {
-    if (simulation.generation == config.SimulationMaxSteps) alert("time out!")
-    step();
-    await sleep(msPerStep);
-  }
-}
-runSimulation();
-
-function step() {
-  simulation.moveNextGen();
-  drawSimulation();
-}
-function updateMapSize(cellSize: number) {
-  map.setCellSizeMultiplier(cellSize);
-  drawSimulation();
-}
 setupControls({
   step: step,
   onChangeSize: updateMapSize,
   onChangeSpeed: (ms) => msPerStep = ms,
 });
 
-function createSimulation(chromosome: bigint) {
-  const simulation = new Simulation(
-    config.CellsInRow,
-    config.CellsInColumn,
-    chromosome
-  );
-  const map = new SimulationMap();
 
-  const draw = () => {
-    map.draw(simulation);
+let simulationWithVisuals: Simulation;
+const simulationMap = new SimulationMap();
+
+async function runSimulation() {
+  const generation = await createGeneration();
+  await runGeneration(generation);
+  const bestSimulation = generation
+    .reduce(
+      (best, current) => best.calculateFitness({ withLimit: true }) > current.calculateFitness({ withLimit: true })
+        ? best : current
+    );
+
+  console.log(bestSimulation.calculateFitness({ withLimit: true }), bestSimulation.generation);
+
+  simulationWithVisuals = new Simulation(config.CellsInRow, config.CellsInColumn, bestSimulation.chromosome);
+
+  while (!simulationWithVisuals.isStabilized()) {
+    if (simulationWithVisuals.generation == config.SimulationMaxSteps) alert("time out!")
+    step();
+    await sleep(msPerStep);
   }
-  draw();
-  return {
-    simulation,
-    map,
-    drawSimulation: draw
-  }
+
+}
+runSimulation();
+
+function step() {
+  simulationWithVisuals.moveNextGen();
+  simulationMap.draw(simulationWithVisuals);
+}
+function updateMapSize(cellSize: number) {
+  simulationMap.setCellSizeMultiplier(cellSize);
+  simulationMap.draw(simulationWithVisuals);
 }
 
 async function sleep(ms: number) {
