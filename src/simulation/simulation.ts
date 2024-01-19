@@ -34,6 +34,8 @@ export class Simulation {
         this.gridHeight = height;
         this.cells = [];
         this.initializeCells(chromosome);
+        const currentState = this.calculateState();
+        this.states.push(currentState);
         this.initialSize = this.calculateSize();
 
         this.cellNeighbors = new Map();
@@ -42,8 +44,6 @@ export class Simulation {
         });
 
         this.statistics = {};
-        const currentState = this.calculateState();
-        this.states.push(currentState);
         this.calculateStatistics();
     }
 
