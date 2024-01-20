@@ -19,6 +19,8 @@ async function runSimulation() {
   let generation = await createGeneration();
   for (let genIndex = 0; genIndex < config.GenerationCount - 1; ++genIndex) {
     const simulations = await runGeneration(generation);
+    const max = Math.max(...simulations.map((simulation) => simulation[1]));
+    console.log("Max fitness: ", max)
     generation = await crossoverGeneration(simulations);
   }
 

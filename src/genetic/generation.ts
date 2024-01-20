@@ -18,7 +18,7 @@ export async function runGeneration(chromosomes: Chromosome[]): Promise<Chromoso
         );
         simulation.runSimulation();
 
-        return [simulation.chromosome, simulation.calculateFitness({ withLimit: true })] as [Chromosome, number];
+        return [simulation.chromosome, simulation.calculateFitness()] as [Chromosome, number];
     });
     return Promise.all(simulations);
 }

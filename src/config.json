@@ -1,22 +1,22 @@
 {
   "CellSize": {
-    "Min": 3,
+    "Min": 2,
     "Max": 6,
-    "Initial": 5,
-    "Multiplier": 5
+    "Initial": 2,
+    "Multiplier": 3
   },
-  "CellsInRow": 30,
-  "CellsInColumn": 30,
+  "CellsInRow": 100,
+  "CellsInColumn": 100,
 
-  "SimulationMaxSteps": 400,
+  "SimulationMaxSteps": 100,
   "PopulationSize": 10,
-  "GenerationCount": 15,
+  "GenerationCount": 20,
   "MutationChance": 0.4,
 
   "InitialChromosome": {
     "CellLivingChance": 0.4,
-    "MaxWidth": 6,
-    "MaxHeight": 6
+    "MaxWidth": 4,
+    "MaxHeight": 4
   },
   "InitialStepsPerSecond": 20
 }

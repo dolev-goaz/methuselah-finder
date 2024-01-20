@@ -48,18 +48,18 @@ export class Simulation {
     }
 
     runSimulation() {
-        for (let i = 0; !this.isStabilized() && i <= config.SimulationMaxSteps; ++i) {
+        for (let i = 0; !this.isStabilized() && i < config.SimulationMaxSteps; ++i) {
             this.moveNextGen();
         }
     }
 
-    calculateFitness(options?: { withLimit: boolean }) {
-        if (options?.withLimit && this.step > config.SimulationMaxSteps) return 0;
+    calculateFitness() {
         const currentSize = this.calculateSize();
         const addedWidth = currentSize.Width - this.initialSize.Width;
         const addedHeight = currentSize.Height - this.initialSize.Height;
 
-        return Math.pow(addedWidth + addedHeight, 3) + this.step;
+        const livingCells = this.cells.filter((cell) => cell.currentStepData.alive).length;
+        return addedWidth + addedHeight + livingCells + this.step;
     }
 
     moveNextGen() {
