@@ -62,6 +62,6 @@ export function isCellAlive(chromosome: Chromosome, positionX: number, positionY
 }
 
 export function cellsToChromosome(cells: Cell[]) {
-    const bitRepresentation = cells.map((cell) => cell.currentGeneration.alive ? '1' : '0').join("");
+    const bitRepresentation = cells.map((cell) => cell.currentStepData.alive ? '1' : '0').join("");
     return BigInt(`0b${bitRepresentation}`);
 }

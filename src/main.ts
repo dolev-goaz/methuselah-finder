@@ -35,7 +35,7 @@ async function runSimulation() {
   simulationMap.draw(simulationWithVisuals);
   await sleep(msPerStep);
   while (!simulationWithVisuals.isStabilized()) {
-    if (simulationWithVisuals.generation == config.SimulationMaxSteps) alert("timed out!")
+    if (simulationWithVisuals.step == config.SimulationMaxSteps) alert("timed out!")
     step();
     await sleep(msPerStep);
   }

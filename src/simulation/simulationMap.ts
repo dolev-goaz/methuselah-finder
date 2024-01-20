@@ -8,7 +8,7 @@ export class SimulationMap {
     private ctx: CanvasRenderingContext2D;
 
     private cellSizeMultiplier: number;
-    private generationHeader: HTMLElement;
+    private stepCountHeader: HTMLElement;
 
     constructor() {
         this.cellSizeMultiplier = config.CellSize.Initial;
@@ -18,7 +18,7 @@ export class SimulationMap {
             throw new Error("Error");
         }
         this.canvas = htmlElements.canvas;
-        this.generationHeader = htmlElements.generationHeader;
+        this.stepCountHeader = htmlElements.stepCountHeader;
 
         const ctx = this.canvas.getContext("2d");
         if (!ctx) throw new Error("An error has occured. please refresh");
@@ -43,7 +43,7 @@ export class SimulationMap {
     draw(simulation: Simulation) {
         this.clear();
         simulation.cells.forEach(this.drawCell.bind(this));
-        this.generationHeader.innerText = `Generation ${simulation.generation}`;
+        this.stepCountHeader.innerText = `Step ${simulation.step}`;
         this.drawStatistics(simulation.statistics);
     }
 
@@ -68,12 +68,12 @@ export class SimulationMap {
         canvas.width = this.cellSize * config.CellsInColumn;
         canvas.height = this.cellSize * config.CellsInRow;
 
-        const generationHeader = document.querySelector<HTMLElement>("header#generation-header")!;
+        const stepCountHeader = document.querySelector<HTMLElement>("header#step-count-header")!;
 
 
         return {
             canvas,
-            generationHeader
+            stepCountHeader
         };
     }
 }

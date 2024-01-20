@@ -1,5 +1,5 @@
 import { Chromosome, cellsToChromosome, isCellAlive } from "@/genetic/chromosome";
-import { Cell, GenerationData, createCell } from "./cell";
+import { Cell, StepData, createCell } from "./cell";
 import config from "@/config.json";
 
 export type Statistics = Record<string, string | number>;
@@ -17,7 +17,7 @@ export class Simulation {
     gridWidth: number;
     gridHeight: number;
 
-    generation: number;
+    step: number;
 
     statistics: Statistics;
     states: Chromosome[] = [];
@@ -27,7 +27,7 @@ export class Simulation {
 
     constructor(width: number, height: number, chromosome: Chromosome) {
         this.chromosome = chromosome;
-        this.generation = 0;
+        this.step = 0;
         this.edges = {};
 
         this.gridWidth = width;
@@ -54,12 +54,12 @@ export class Simulation {
     }
 
     calculateFitness(options?: { withLimit: boolean }) {
-        if (options?.withLimit && this.generation > config.SimulationMaxSteps) return 0;
+        if (options?.withLimit && this.step > config.SimulationMaxSteps) return 0;
         const currentSize = this.calculateSize();
         const addedWidth = currentSize.Width - this.initialSize.Width;
         const addedHeight = currentSize.Height - this.initialSize.Height;
 
-        return Math.pow(addedWidth + addedHeight, 3) + this.generation;
+        return Math.pow(addedWidth + addedHeight, 3) + this.step;
     }
 
     moveNextGen() {
@@ -70,7 +70,7 @@ export class Simulation {
             this.moveCellNextGen(cell);
             this.updatePatternEdges(cell);
         });
-        this.generation += 1;
+        this.step += 1;
 
         const currentState = this.calculateState();
         this.states.push(currentState);
@@ -97,7 +97,7 @@ export class Simulation {
     }
 
     private updatePatternEdges(cell: Cell) {
-        if (!cell.currentGeneration.alive) return;
+        if (!cell.currentStepData.alive) return;
         if (!this.edges.top || (cell.indexY < this.edges.top.indexY)) {
             this.edges.top = cell;
         }
@@ -136,26 +136,26 @@ export class Simulation {
     }
 
     private moveCellNextGen(cell: Cell) {
-        cell.currentGeneration = cell.nextGeneration as GenerationData;
-        cell.nextGeneration = {};
+        cell.currentStepData = cell.nextStepData as StepData;
+        cell.nextStepData = {};
     }
 
     private calculateCellNextGen(cell: Cell) {
         const neighbors = this.cellNeighbors.get(cell);
         if (!neighbors) throw new Error("Invalid cell");
 
-        cell.nextGeneration.alive = cell.currentGeneration.alive; // initialization
+        cell.nextStepData.alive = cell.currentStepData.alive; // initialization
 
-        const livingNeighborsCount = neighbors.filter((neighbor) => neighbor.currentGeneration.alive).length;
+        const livingNeighborsCount = neighbors.filter((neighbor) => neighbor.currentStepData.alive).length;
 
-        if (!cell.currentGeneration.alive) {
+        if (!cell.currentStepData.alive) {
             // dead cells turn alive if there are 3 neighbors
-            cell.nextGeneration.alive = (livingNeighborsCount == 3);
+            cell.nextStepData.alive = (livingNeighborsCount == 3);
             return;
         }
 
         // living cells die if there are too many or too few neighbors
-        cell.nextGeneration.alive = (livingNeighborsCount > 1 && livingNeighborsCount < 4)
+        cell.nextStepData.alive = (livingNeighborsCount > 1 && livingNeighborsCount < 4)
     }
 
     /**

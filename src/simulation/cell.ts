@@ -6,7 +6,7 @@ type DrawData = {
     drawSize: number;
 };
 
-export type GenerationData = {
+export type StepData = {
     alive: boolean;
 }
 
@@ -14,9 +14,9 @@ export type Cell = {
     indexX: number;
     indexY: number;
 
-    currentGeneration: GenerationData;
+    currentStepData: StepData;
 
-    nextGeneration: Partial<GenerationData>;
+    nextStepData: Partial<StepData>;
 
 }
 
@@ -28,10 +28,10 @@ export function createCell(
     return {
         indexX: indexX,
         indexY: indexY,
-        currentGeneration: {
+        currentStepData: {
             alive: alive
         },
-        nextGeneration: {}
+        nextStepData: {}
     }
 }
 
@@ -42,7 +42,7 @@ export function drawCell(ctx: CanvasRenderingContext2D, cell: Cell, cellSize: nu
         drawSize: cellSize
     };
 
-    ctx.fillStyle = cell.currentGeneration.alive ? 'orange' : 'white';
+    ctx.fillStyle = cell.currentStepData.alive ? 'orange' : 'white';
     ctx.fillRect(
         drawData.drawX + cellBorderThickness,
         drawData.drawY + cellBorderThickness,
