@@ -3,12 +3,13 @@ import { Cell } from "@/simulation/cell";
 
 export type Chromosome = bigint;
 
+const chromosomeSize = config.CellsInRow * config.CellsInColumn
 const chromosomeMask = generateChromosomeCenterMask();
 // debug- see chromosome mask
 const maskStr =
     chromosomeMask.toString(2)
-        .padStart(900, '0')
-        .match(/.{30,30}/g)!
+        .padStart(chromosomeSize, '0')
+        .match(new RegExp(`.{${config.CellsInRow}}`, 'g'))!;
 console.log("CHROMOSOME MASK-\n" + maskStr.join('\n'));
 
 function generateChromosomeCenterMask() {
