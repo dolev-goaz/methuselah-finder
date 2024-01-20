@@ -8,13 +8,15 @@
   "CellsInRow": 100,
   "CellsInColumn": 100,
 
-  "SimulationMaxSteps": 100,
-  "PopulationSize": 10,
-  "GenerationCount": 20,
-  "MutationChance": 0.4,
+  "SimulationMaxSteps": 200,
+  "PopulationSize": 20,
+  "GenerationCount": 100,
+  "MutationChance": 0.6,
+
+  "BestPromotionCount": 1,
 
   "InitialChromosome": {
-    "CellLivingChance": 0.4,
+    "CellLivingChance": 0.2,
     "MaxWidth": 4,
     "MaxHeight": 4
   },
