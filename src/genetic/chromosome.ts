@@ -1,46 +1,22 @@
 import config from "@/config.json"
-import { Cell } from "@/simulation/cell";
 
 export type Chromosome = bigint;
 
-const chromosomeSize = config.CellsInRow * config.CellsInColumn
-const chromosomeMask = generateChromosomeCenterMask();
-// debug- see chromosome mask
-const maskStr =
-    chromosomeMask.toString(2)
-        .padStart(chromosomeSize, '0')
-        .match(new RegExp(`.{${config.CellsInRow}}`, 'g'))!;
-console.log("CHROMOSOME MASK-\n" + maskStr.join('\n'));
+const chromosomeSize = config.InitialChromosome.MaxWidth * config.InitialChromosome.MaxHeight;
 
-function generateChromosomeCenterMask() {
-    let rowMask = BigInt(0);
+const xLimits = [
+    Math.floor((config.CellsInRow - config.InitialChromosome.MaxWidth) / 2),
+    Math.floor((config.CellsInRow + config.InitialChromosome.MaxWidth) / 2),
+];
+const yLimits = [
+    Math.floor((config.CellsInColumn - config.InitialChromosome.MaxHeight) / 2),
+    Math.floor((config.CellsInColumn + config.InitialChromosome.MaxHeight) / 2),
+];
+console.log(xLimits, yLimits)
 
-    const [rowPadding, colPadding] = [
-        (config.CellsInRow - config.InitialChromosome.MaxWidth) / 2,
-        (config.CellsInColumn - config.InitialChromosome.MaxHeight) / 2
-    ].map(Math.floor);
 
-    for (let _ = 0; _ < config.InitialChromosome.MaxWidth; ++_) {
-        rowMask <<= 1n;
-        rowMask |= 1n;
-    }
-
-    rowMask <<= BigInt(rowPadding);
-
-    let chromosomeMask = BigInt(0);
-
-    for (let _ = 0; _ < config.InitialChromosome.MaxHeight; ++_) {
-        chromosomeMask <<= BigInt(config.CellsInRow);
-        chromosomeMask |= rowMask;
-    }
-
-    chromosomeMask <<= BigInt(config.CellsInRow * colPadding);
-    return chromosomeMask
-}
-
-export async function generateChromosomeAsync() {
+export async function generateChromosome() {
     let chromosome = BigInt(0);
-    const chromosomeSize = config.CellsInColumn * config.CellsInRow;
 
     await Promise.all(
         Array.from({ length: chromosomeSize })
@@ -51,18 +27,15 @@ export async function generateChromosomeAsync() {
             })
     );
 
-    chromosome &= chromosomeMask;
-
     return chromosome;
 }
 
-export function isCellAlive(chromosome: Chromosome, positionX: number, positionY: number) {
-    const index = BigInt(positionY * config.CellsInRow + positionX);
-
+export function isInitialCellAlive(chromosome: Chromosome, positionX: number, positionY: number) {
+    if (positionX < xLimits[0] || positionX >= xLimits[1] || positionY < yLimits[0] || positionY >= yLimits[1]) {
+        return false;
+    }
+    positionX -= xLimits[0];
+    positionY -= yLimits[0];
+    const index = BigInt(positionY * config.InitialChromosome.MaxWidth + positionX);
     return Boolean(chromosome & (1n << index));
-}
-
-export function cellsToChromosome(cells: Cell[]) {
-    const bitRepresentation = cells.map((cell) => cell.currentStepData.alive ? '1' : '0').join("");
-    return BigInt(`0b${bitRepresentation}`);
 }

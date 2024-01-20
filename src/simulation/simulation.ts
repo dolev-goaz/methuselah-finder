@@ -1,4 +1,4 @@
-import { Chromosome, cellsToChromosome, isCellAlive } from "@/genetic/chromosome";
+import { Chromosome, isInitialCellAlive } from "@/genetic/chromosome";
 import { Cell, StepData, createCell } from "./cell";
 import config from "@/config.json";
 
@@ -89,7 +89,7 @@ export class Simulation {
         this.cells.length = 0;
         for (let yIndex = 0; yIndex < this.gridHeight; ++yIndex) {
             for (let xIndex = 0; xIndex < this.gridWidth; ++xIndex) {
-                const newCell = createCell(xIndex, yIndex, isCellAlive(chromosome, xIndex, yIndex));
+                const newCell = createCell(xIndex, yIndex, isInitialCellAlive(chromosome, xIndex, yIndex));
                 this.cells.push(newCell);
                 this.updatePatternEdges(newCell)
             }
@@ -113,7 +113,8 @@ export class Simulation {
     }
 
     private calculateState() {
-        return cellsToChromosome(this.cells);
+        const bitRepresentation = this.cells.map((cell) => cell.currentStepData.alive ? '1' : '0').join("");
+        return BigInt(`0b${bitRepresentation}`);
     }
 
     private calculateStatistics() {
