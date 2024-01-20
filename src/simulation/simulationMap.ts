@@ -28,8 +28,8 @@ export class SimulationMap {
     setCellSizeMultiplier(multiplier: number) {
         this.cellSizeMultiplier = multiplier;
 
-        this.canvas.width = this.cellSize * config.CellsInColumn;
-        this.canvas.height = this.cellSize * config.CellsInRow;
+        this.canvas.width = this.cellSize * config.CellsInRow;
+        this.canvas.height = this.cellSize * config.CellsInColumn;
     }
 
     private drawCell(cell: Cell) {
@@ -65,8 +65,8 @@ export class SimulationMap {
         if (!canvasParent) return;
         const canvas = canvasParent.querySelector<HTMLCanvasElement>("canvas");
         if (!canvas) return;
-        canvas.width = this.cellSize * config.CellsInColumn;
-        canvas.height = this.cellSize * config.CellsInRow;
+        canvas.width = this.cellSize * config.CellsInRow;
+        canvas.height = this.cellSize * config.CellsInColumn;
 
         const stepCountHeader = document.querySelector<HTMLElement>("header#step-count-header")!;
 

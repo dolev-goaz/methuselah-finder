@@ -87,8 +87,8 @@ export class Simulation {
 
     private initializeCells(chromosome: Chromosome) {
         this.cells.length = 0;
-        for (let yIndex = 0; yIndex < this.gridWidth; ++yIndex) {
-            for (let xIndex = 0; xIndex < this.gridHeight; ++xIndex) {
+        for (let yIndex = 0; yIndex < this.gridHeight; ++yIndex) {
+            for (let xIndex = 0; xIndex < this.gridWidth; ++xIndex) {
                 const newCell = createCell(xIndex, yIndex, isCellAlive(chromosome, xIndex, yIndex));
                 this.cells.push(newCell);
                 this.updatePatternEdges(newCell)
