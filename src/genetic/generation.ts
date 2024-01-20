@@ -39,15 +39,14 @@ export async function crossoverGeneration(generation: ChromosomeResult[]) {
             return [sum, chromosomeResult[0]] as [number, Chromosome];
         });
 
-    const newGeneration: Chromosome[] = [];
-
-    for (let i = 0; i < config.PopulationSize; ++i) {
-        const parents = selectParents(probabilityLimits);
-        const child = crossover(parents);
-        newGeneration.push(tryMutate(child));
-    }
-
-    return newGeneration;
+    return Promise.all(
+        Array.from({ length: config.PopulationSize })
+            .map(() => {
+                const parents = selectParents(probabilityLimits);
+                const child = crossover(parents);
+                return tryMutate(child);
+            })
+    );
 }
 
 function tryMutate(chromosome: Chromosome) {
