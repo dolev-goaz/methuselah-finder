@@ -3,6 +3,7 @@ import { Chromosome, generateChromosomeAsync } from "./chromosome";
 import config from "@/config.json";
 
 type ChromosomeResult = [Chromosome, number];
+const chromosomeSize = config.CellsInRow * config.CellsInColumn
 
 export async function createGeneration() {
     return Promise.all(Array.from({ length: config.PopulationSize }).map(generateChromosomeAsync));
@@ -51,13 +52,21 @@ export async function crossoverGeneration(generation: ChromosomeResult[]) {
 
 function tryMutate(chromosome: Chromosome) {
     if (Math.random() >= config.MutationChance) return chromosome;
-    const totalCells = config.CellsInRow * config.CellsInColumn
-    const mutationPosition = BigInt(Math.floor(Math.random() * totalCells));
+    const mutationPosition = BigInt(Math.floor(Math.random() * chromosomeSize));
     chromosome ^= (1n << mutationPosition);
     return chromosome;
 }
 
 function crossover(parents: Chromosome[]) {
+    const chunkSize = BigInt(chromosomeSize / parents.length);
+    let mask = (1n << chunkSize) - 1n;
+    let out = BigInt(0);
+    parents.forEach((parent) => {
+        out <<= chunkSize;
+        out |= (parent & mask);
+
+        mask <<= chunkSize;
+    })
     return parents[0]
 }
 
