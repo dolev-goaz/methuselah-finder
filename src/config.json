@@ -5,20 +5,21 @@
     "Initial": 2,
     "Multiplier": 3
   },
-  "CellsInRow": 100,
-  "CellsInColumn": 100,
+  "CellsInRow": 50,
+  "CellsInColumn": 50,
 
   "SimulationMaxSteps": 200,
-  "PopulationSize": 20,
-  "GenerationCount": 100,
+  "PopulationSize": 30,
+  "GenerationCount": 200,
   "MutationChance": 0.6,
 
   "BestPromotionCount": 1,
+  "NewVariancePopulationCount": 5,
 
   "InitialChromosome": {
     "CellLivingChance": 0.2,
-    "MaxWidth": 4,
-    "MaxHeight": 4
+    "MaxWidth": 6,
+    "MaxHeight": 6
   },
   "InitialStepsPerSecond": 20
 }
