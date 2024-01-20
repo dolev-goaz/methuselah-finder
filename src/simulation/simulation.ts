@@ -117,8 +117,10 @@ export class Simulation {
     }
 
     private calculateStatistics() {
-        Object.assign(this.statistics, this.calculateSize());
         this.statistics.Fitness = this.calculateFitness();
+        this.statistics["Initial Width"] = this.initialSize.Width;
+        this.statistics["Initial Height"] = this.initialSize.Height;
+        Object.assign(this.statistics, this.calculateSize());
     }
 
     private calculateSize() {
