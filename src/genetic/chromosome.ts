@@ -3,6 +3,40 @@ import { Cell } from "@/simulation/cell";
 
 export type Chromosome = bigint;
 
+const chromosomeMask = generateChromosomeCenterMask();
+// debug- see chromosome mask
+const maskStr =
+    chromosomeMask.toString(2)
+        .padStart(900, '0')
+        .match(/.{30,30}/g)!
+console.log("CHROMOSOME MASK-\n" + maskStr.join('\n'));
+
+function generateChromosomeCenterMask() {
+    let rowMask = BigInt(0);
+
+    const [rowPadding, colPadding] = [
+        (config.CellsInRow - config.InitialChromosome.MaxWidth) / 2,
+        (config.CellsInColumn - config.InitialChromosome.MaxHeight) / 2
+    ].map(Math.floor);
+
+    for (let _ = 0; _ < config.InitialChromosome.MaxWidth; ++_) {
+        rowMask <<= 1n;
+        rowMask |= 1n;
+    }
+
+    rowMask <<= BigInt(rowPadding);
+
+    let chromosomeMask = BigInt(0);
+
+    for (let _ = 0; _ < config.InitialChromosome.MaxHeight; ++_) {
+        chromosomeMask <<= BigInt(config.CellsInRow);
+        chromosomeMask |= rowMask;
+    }
+
+    chromosomeMask <<= BigInt(config.CellsInRow * colPadding);
+    return chromosomeMask
+}
+
 export async function generateChromosomeAsync() {
     let chromosome = BigInt(0);
     const chromosomeSize = config.CellsInColumn * config.CellsInRow;
@@ -15,6 +49,8 @@ export async function generateChromosomeAsync() {
                 }
             })
     );
+
+    chromosome &= chromosomeMask;
 
     return chromosome;
 }
