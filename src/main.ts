@@ -9,6 +9,7 @@ setupControls({
   step: step,
   onChangeSize: updateMapSize,
   onChangeSpeed: (ms) => msPerStep = ms,
+  onRun: runSimulation,
 });
 
 
@@ -41,9 +42,7 @@ async function runSimulation() {
     step();
     await sleep(msPerStep);
   }
-
 }
-runSimulation();
 
 function step() {
   simulationWithVisuals.moveNextGen();

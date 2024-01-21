@@ -1,14 +1,15 @@
 import config from "@/config.json";
 
-type fn<T extends any[] = []> = (...args: T) => void;
+type fn<T extends any[] = [], TOut = void> = (...args: T) => TOut;
 type ControlsData = {
     step: fn;
     onChangeSize: fn<[number]>;
     onChangeSpeed: fn<[number]>;
+    onRun: fn<[], Promise<void>>;
 }
 
 export function setupControls(options: ControlsData) {
-    createLoopControls(options.onChangeSpeed);
+    createLoopControls(options.onRun, options.onChangeSpeed);
     createStepButton(options.step);
     createGridSizeControl(options.onChangeSize);
 }
@@ -23,7 +24,7 @@ function createGridSizeControl(onChange: fn<[number]>) {
     }
 }
 
-function createLoopControls(onSpeedChange: fn<[number]>) {
+function createLoopControls(onRun: fn<[], Promise<void>>, onSpeedChange: fn<[number]>) {
     const initialSliderValue = config.InitialStepsPerSecond;
     let timePerFrame = 1000 / initialSliderValue;
     onSpeedChange(timePerFrame);
@@ -43,6 +44,12 @@ function createLoopControls(onSpeedChange: fn<[number]>) {
         slider.title = `steps per second- ${slider.value}`;
         sliderLabel.innerText = `steps per second- ${slider.value}`;
         onSpeedChange(timePerFrame);
+    };
+
+    const runButton = document.querySelector<HTMLInputElement>("button[type=button]#start")!;
+    runButton.onclick = () => {
+        runButton.hidden = true;
+        setTimeout(onRun, 1);
     };
 }
 
