@@ -83,7 +83,7 @@ function crossover(parents: Chromosome[]) {
 
         mask <<= chunkSize;
     })
-    return parents[0]
+    return out;
 }
 
 function selectParents(probabilities: Array<[number, Chromosome]>, count: number = 2) {
