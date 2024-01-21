@@ -54,12 +54,11 @@ export class Simulation {
     }
 
     calculateFitness() {
-        const currentSize = this.calculateSize();
-        const addedWidth = currentSize.Width - this.initialSize.Width;
-        const addedHeight = currentSize.Height - this.initialSize.Height;
-
+        // const currentSize = this.calculateSize();
         const livingCells = this.cells.filter((cell) => cell.currentStepData.alive).length;
-        return addedWidth + addedHeight + livingCells + this.step;
+        const maxLivingCells = this.gridWidth * this.gridHeight;
+        const ratio = livingCells / maxLivingCells;
+        return 200 * ratio + Math.sqrt(this.step);
     }
 
     moveNextGen() {
