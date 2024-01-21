@@ -12,8 +12,6 @@ const yLimits = [
     Math.floor((config.CellsInColumn - config.InitialChromosome.MaxHeight) / 2),
     Math.floor((config.CellsInColumn + config.InitialChromosome.MaxHeight) / 2),
 ];
-console.log(xLimits, yLimits)
-
 
 export async function generateChromosome() {
     let chromosome = BigInt(0);
