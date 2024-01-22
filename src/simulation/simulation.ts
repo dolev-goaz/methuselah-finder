@@ -4,9 +4,6 @@ import config from "@/config.json";
 
 export type Statistics = Record<string, string | number>;
 
-type Edges = Partial<Record<'top' | 'left' | 'bottom' | 'right', Cell>>;
-type Size = { Width: number; Height: number; }
-
 export class Simulation {
 
     chromosome: Chromosome;
@@ -22,13 +19,9 @@ export class Simulation {
     statistics: Statistics;
     states: Chromosome[] = [];
 
-    edges: Edges;
-    initialSize: Size;
-
     constructor(width: number, height: number, chromosome: Chromosome) {
         this.chromosome = chromosome;
         this.step = 0;
-        this.edges = {};
 
         this.gridWidth = width;
         this.gridHeight = height;
@@ -36,7 +29,6 @@ export class Simulation {
         this.initializeCells(chromosome);
         const currentState = this.calculateState();
         this.states.push(currentState);
-        this.initialSize = this.calculateSize();
 
         this.cellNeighbors = new Map();
         this.cells.forEach((cell) => {
@@ -62,12 +54,9 @@ export class Simulation {
     }
 
     moveNextGen() {
-        this.edges = {};
-
         this.cells.forEach(this.calculateCellNextGen.bind(this));
         this.cells.forEach((cell) => {
             this.moveCellNextGen(cell);
-            this.updatePatternEdges(cell);
         });
         this.step += 1;
 
@@ -90,24 +79,7 @@ export class Simulation {
             for (let xIndex = 0; xIndex < this.gridWidth; ++xIndex) {
                 const newCell = createCell(xIndex, yIndex, isInitialCellAlive(chromosome, xIndex, yIndex));
                 this.cells.push(newCell);
-                this.updatePatternEdges(newCell)
             }
-        }
-    }
-
-    private updatePatternEdges(cell: Cell) {
-        if (!cell.currentStepData.alive) return;
-        if (!this.edges.top || (cell.indexY < this.edges.top.indexY)) {
-            this.edges.top = cell;
-        }
-        if (!this.edges.bottom || (cell.indexY > this.edges.bottom.indexY)) {
-            this.edges.bottom = cell;
-        }
-        if (!this.edges.left || (cell.indexX < this.edges.left.indexX)) {
-            this.edges.left = cell;
-        }
-        if (!this.edges.right || (cell.indexX > this.edges.right.indexX)) {
-            this.edges.right = cell;
         }
     }
 
@@ -118,23 +90,6 @@ export class Simulation {
 
     private calculateStatistics() {
         this.statistics.Fitness = this.calculateFitness();
-        this.statistics["Initial Width"] = this.initialSize.Width;
-        this.statistics["Initial Height"] = this.initialSize.Height;
-        Object.assign(this.statistics, this.calculateSize());
-    }
-
-    private calculateSize() {
-        const size: Size = {
-            Width: 0,
-            Height: 0
-        };
-        if (this.states[this.states.length - 1] === 0n) {
-            // no cells are alive (all bits are turned off)
-            return size;
-        }
-        size.Width = this.edges.right!.indexX - this.edges.left!.indexX + 1;
-        size.Height = this.edges.bottom!.indexY - this.edges.top!.indexY + 1;
-        return size;
     }
 
     private moveCellNextGen(cell: Cell) {
