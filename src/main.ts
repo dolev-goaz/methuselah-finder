@@ -20,28 +20,29 @@ setupControls({
 let simulationWithVisuals: Simulation;
 const simulationMap = new SimulationMap();
 
-async function runSimulation() {
+simulationWorker.onmessage = async ({ data }: MessageEvent<WorkerOutput>) => {
 
-  simulationWorker.postMessage("start");
-  simulationWorker.onmessage = async ({ data }: MessageEvent<WorkerOutput>) => {
-
-    if (data.type == 'progress') {
-      console.log(`Generation: ${data.innerData.generation}, Max Fitness: ${data.innerData.maxFitness}`);
-      return;
-    }
-    // data.type = result
-    const chromosome = data.innerData;
-
-    simulationWithVisuals = new Simulation(config.CellsInRow, config.CellsInColumn, chromosome);
-
-    simulationMap.draw(simulationWithVisuals);
-    await sleep(msPerStep);
-    while (!simulationWithVisuals.isStabilized()) {
-      if (simulationWithVisuals.step == config.SimulationMaxSteps) alert("timed out!")
-      step();
-      await sleep(msPerStep);
-    }
+  if (data.type == 'progress') {
+    console.log(`Generation: ${data.innerData.generation}, Max Fitness: ${data.innerData.maxFitness}`);
+    return;
   }
+  // data.type = result
+  const chromosome = data.innerData;
+
+  simulationWithVisuals = new Simulation(config.CellsInRow, config.CellsInColumn, chromosome);
+
+  simulationMap.draw(simulationWithVisuals);
+  await sleep(msPerStep);
+  while (!simulationWithVisuals.isStabilized()) {
+    if (simulationWithVisuals.step == config.SimulationMaxSteps) alert("timed out!")
+    step();
+    await sleep(msPerStep);
+  }
+}
+
+
+function runSimulation() {
+  simulationWorker.postMessage("start");
 }
 
 function step() {

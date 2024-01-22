@@ -2,7 +2,7 @@
   "CellSize": {
     "Min": 2,
     "Max": 6,
-    "Initial": 2,
+    "Initial": 5,
     "Multiplier": 3
   },
   "CellsInRow": 50,

@@ -5,7 +5,7 @@ type ControlsData = {
     step: fn;
     onChangeSize: fn<[number]>;
     onChangeSpeed: fn<[number]>;
-    onRun: fn<[], Promise<void>>;
+    onRun: fn;
 }
 
 export function setupControls(options: ControlsData) {
@@ -24,7 +24,7 @@ function createGridSizeControl(onChange: fn<[number]>) {
     }
 }
 
-function createLoopControls(onRun: fn<[], Promise<void>>, onSpeedChange: fn<[number]>) {
+function createLoopControls(onRun: fn, onSpeedChange: fn<[number]>) {
     const initialSliderValue = config.InitialStepsPerSecond;
     let timePerFrame = 1000 / initialSliderValue;
     onSpeedChange(timePerFrame);
@@ -49,7 +49,7 @@ function createLoopControls(onRun: fn<[], Promise<void>>, onSpeedChange: fn<[num
     const runButton = document.querySelector<HTMLInputElement>("button[type=button]#start")!;
     runButton.onclick = () => {
         runButton.hidden = true;
-        setTimeout(onRun, 1);
+        onRun();
     };
 }
 
