@@ -45,6 +45,12 @@ main {
 #simulation-progress > #generation-count, #fitness {
   font-size: 1.125rem;
 }
+#generation-count #current-generation {
+  font-weight: bold;
+}
+#fitness #current-fitness {
+  font-weight: bold;
+}
 
 nav {
   position: sticky;

@@ -61,7 +61,8 @@ function handleProgress(progress: WorkerOutputObject['progress']) {
   if (fitnessHistory.indexOf(fitnessRounded) == -1) {
     fitnessHistory.push(fitnessRounded);
     document.querySelector("#simulation-progress #fitness-history")!
-      .innerHTML = JSON.stringify(fitnessHistory, null, 2);
+      .innerHTML = JSON.stringify(fitnessHistory, null, 2) + 
+      ` (${fitnessHistory.length} total)`;
   }
 
 

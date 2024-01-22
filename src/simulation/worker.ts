@@ -20,10 +20,10 @@ export type WorkerOutput = {
 
 async function runGeneticAlgorithm() {
     let generation = await createGeneration();
-    for (let genIndex = 0; genIndex < config.GenerationCount - 1; ++genIndex) {
+    for (let genIndex = 0; genIndex < config.GenerationCount; ++genIndex) {
         const simulations = await runGeneration(generation);
         const max = Math.max(...simulations.map((simulation) => simulation[1]));
-        myPostMessage('progress', { generation: genIndex, maxFitness: max });
+        myPostMessage('progress', { generation: genIndex + 1, maxFitness: max });
         generation = await crossoverGeneration(simulations);
     }
 
