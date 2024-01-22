@@ -54,12 +54,23 @@ async function handleResult(chromosome: Chromosome) {
   }
 }
 
+const fitnessHistory: number[] = [];
+
 function handleProgress(progress: WorkerOutputObject['progress']) {
+  const fitnessRounded = parseFloat(progress.maxFitness.toFixed(3));
+  if (fitnessHistory.indexOf(fitnessRounded) == -1) {
+    fitnessHistory.push(fitnessRounded);
+    document.querySelector("#simulation-progress #fitness-history")!
+      .innerHTML = JSON.stringify(fitnessHistory, null, 2);
+  }
+
+
   document.querySelector("#simulation-progress #current-generation")!
     .innerHTML = progress.generation.toString();
 
-  document.querySelector("#simulation-progress #max-fitness")!
-    .innerHTML = progress.maxFitness.toFixed(3);
+  document.querySelector("#simulation-progress #current-fitness")!
+    .innerHTML = fitnessRounded.toString();
+
 }
 
 
