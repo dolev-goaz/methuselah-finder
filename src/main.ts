@@ -2,7 +2,8 @@ import { Simulation } from "./simulation/simulation";
 import config from "./config.json";
 import { setupControls } from "./controls";
 import { SimulationMap } from "./simulation/simulationMap";
-import { WorkerOutput } from "./simulation/worker";
+import type { WorkerOutput, WorkerOutputObject } from "./simulation/worker";
+import { Chromosome } from "./genetic/chromosome";
 
 const simulationWorker = new Worker(new URL('./simulation/worker.ts', import.meta.url), {
   type: 'module'
@@ -20,15 +21,28 @@ setupControls({
 let simulationWithVisuals: Simulation;
 const simulationMap = new SimulationMap();
 
-simulationWorker.onmessage = async ({ data }: MessageEvent<WorkerOutput>) => {
+simulationWorker.onmessage = ({ data }: MessageEvent<WorkerOutput>) => {
 
-  if (data.type == 'progress') {
-    console.log(`Generation: ${data.innerData.generation}, Max Fitness: ${data.innerData.maxFitness}`);
-    return;
+  switch (data.type) {
+    case 'progress': {
+      handleProgress(data.innerData);
+      break;
+    }
+    case 'result': {
+      handleResult(data.innerData);
+      break;
+    }
+    default: {
+      alert("Unhandled message type");
+      throw Error("Unhandled message type");
+    }
+
   }
-  // data.type = result
-  const chromosome = data.innerData;
+}
 
+async function handleResult(chromosome: Chromosome) {
+  document.querySelector<HTMLDivElement>("#simulation-container")!.hidden = false;
+  document.querySelector<HTMLDivElement>("#simulation-progress")!.hidden = true;
   simulationWithVisuals = new Simulation(config.CellsInRow, config.CellsInColumn, chromosome);
 
   simulationMap.draw(simulationWithVisuals);
@@ -40,8 +54,20 @@ simulationWorker.onmessage = async ({ data }: MessageEvent<WorkerOutput>) => {
   }
 }
 
+function handleProgress(progress: WorkerOutputObject['progress']) {
+  document.querySelector("#simulation-progress #current-generation")!
+    .innerHTML = progress.generation.toString();
+
+  document.querySelector("#simulation-progress #max-fitness")!
+    .innerHTML = progress.maxFitness.toFixed(3);
+}
+
 
 function runSimulation() {
+  document.querySelector<HTMLDivElement>("#simulation-progress")!.hidden = false;
+  document.querySelector<HTMLSpanElement>("#simulation-progress #total-generations")!
+    .innerHTML = config.GenerationCount.toString();
+
   simulationWorker.postMessage("start");
 }
 

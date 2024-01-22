@@ -21,12 +21,31 @@ body {
 }
 main {
   position: relative;
+  flex: 1;
+}
+#simulation-container {
   display: flex;
   gap: 1rem;
   align-items: center;
   margin-left: 5rem;
-  flex: 1;
+  height: 100%;
 }
+#simulation-progress{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+#simulation-progress > header {
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+#simulation-progress > #generation-count, #fitness {
+  font-size: 1.125rem;
+}
+
 nav {
   position: sticky;
   top: 0;
@@ -38,7 +57,7 @@ nav {
   align-items: center;
   gap: 0.25rem;
 }
-nav>#export-excel {
+nav > #export-excel {
   margin-inline-end: 0.75rem;
 }
 footer {
@@ -74,7 +93,7 @@ header#step-count-header {
   padding: 1rem;
   border-radius: 0.375rem;
 }
-#statistics-container>header {
+#statistics-container > header {
   text-align: center;
   font-weight: bold;
   text-decoration: underline;

@@ -13,21 +13,36 @@
       <input step="1" id="grid-size" type="range" title="grid side" />
     </nav>
     <main>
-      <div id="simulation-map">
-        <header id="step-count-header"></header>
-        <canvas></canvas>
+      <div id="simulation-progress" hidden>
+        <header>Genetic Algorithm in progress..</header>
+        <div id="generation-count">
+          Generation
+          <span id="current-generation"></span>
+          of
+          <span id="total-generations"></span>
+        </div>
+        <div id="fitness">
+          Current Max Fitness:
+          <span id="max-fitness"></span>
+        </div>
       </div>
-      <div id="statistics-container" hidden>
-        <header>Statistics</header>
-        <p id="statistics"></p>
+      <div id="simulation-container" hidden>
+        <div id="simulation-map">
+          <header id="step-count-header"></header>
+          <canvas></canvas>
+        </div>
+        <div id="statistics-container" hidden>
+          <header>Statistics</header>
+          <p id="statistics"></p>
+        </div>
       </div>
     </main>
     <footer>
-      <button type="button" id="start" title="start simulation">Start Simulation</button>
+      <button type="button" id="start" title="start simulation">
+        Start Simulation
+      </button>
       <div class="auto-step">
-        <header>
-          auto step
-        </header>
+        <header>auto step</header>
         <div class="auto-step-controls">
           <input id="auto-step-speed" type="range" title="auto step speed" />
           <label for="auto-step-speed"></label>

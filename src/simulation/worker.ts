@@ -3,7 +3,7 @@ import { Chromosome } from "@/genetic/chromosome";
 import { createGeneration, crossoverGeneration, runGeneration } from "@/genetic/generation";
 
 type WorkerInput = 'start';
-type _workerOutput = {
+export type WorkerOutputObject = {
     result: Chromosome;
     progress: {
         generation: number;
@@ -12,11 +12,11 @@ type _workerOutput = {
 }
 
 export type WorkerOutput = {
-    [TKey in keyof _workerOutput]: {
+    [TKey in keyof WorkerOutputObject]: {
         type: TKey;
-        innerData: _workerOutput[TKey]
+        innerData: WorkerOutputObject[TKey]
     }
-}[keyof _workerOutput];
+}[keyof WorkerOutputObject];
 
 async function runGeneticAlgorithm() {
     let generation = await createGeneration();
@@ -44,7 +44,7 @@ onmessage = async (event: MessageEvent<WorkerInput>) => {
     }
 }
 
-function myPostMessage<TKey extends keyof _workerOutput>(type: TKey, data: _workerOutput[TKey]) {
+function myPostMessage<TKey extends keyof WorkerOutputObject>(type: TKey, data: WorkerOutputObject[TKey]) {
     postMessage({
         type,
         innerData: data,
