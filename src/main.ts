@@ -2,7 +2,11 @@ import { Simulation } from "./simulation/simulation";
 import config from "./config.json";
 import { setupControls } from "./controls";
 import { SimulationMap } from "./simulation/simulationMap";
-import { createGeneration, crossoverGeneration, runGeneration } from "./genetic/generation";
+import { WorkerOutput } from "./simulation/worker";
+
+const simulationWorker = new Worker(new URL('./simulation/worker.ts', import.meta.url), {
+  type: 'module'
+})
 
 let msPerStep = 0;
 setupControls({
@@ -17,30 +21,26 @@ let simulationWithVisuals: Simulation;
 const simulationMap = new SimulationMap();
 
 async function runSimulation() {
-  let generation = await createGeneration();
-  for (let genIndex = 0; genIndex < config.GenerationCount - 1; ++genIndex) {
-    const simulations = await runGeneration(generation);
-    const max = Math.max(...simulations.map((simulation) => simulation[1]));
-    console.log("Generation: " + genIndex, "Max fitness: " + max)
-    generation = await crossoverGeneration(simulations);
-  }
 
-  const lastGeneration = await runGeneration(generation);
-  
-  const bestSimulation = lastGeneration
-    .reduce(
-      (best, current) => best[1] > current[1]
-        ? best : current
-    );
+  simulationWorker.postMessage("start");
+  simulationWorker.onmessage = async ({ data }: MessageEvent<WorkerOutput>) => {
 
-  simulationWithVisuals = new Simulation(config.CellsInRow, config.CellsInColumn, bestSimulation[0]);
+    if (data.type == 'progress') {
+      console.log(`Generation: ${data.innerData.generation}, Max Fitness: ${data.innerData.maxFitness}`);
+      return;
+    }
+    // data.type = result
+    const chromosome = data.innerData;
 
-  simulationMap.draw(simulationWithVisuals);
-  await sleep(msPerStep);
-  while (!simulationWithVisuals.isStabilized()) {
-    if (simulationWithVisuals.step == config.SimulationMaxSteps) alert("timed out!")
-    step();
+    simulationWithVisuals = new Simulation(config.CellsInRow, config.CellsInColumn, chromosome);
+
+    simulationMap.draw(simulationWithVisuals);
     await sleep(msPerStep);
+    while (!simulationWithVisuals.isStabilized()) {
+      if (simulationWithVisuals.step == config.SimulationMaxSteps) alert("timed out!")
+      step();
+      await sleep(msPerStep);
+    }
   }
 }
 
