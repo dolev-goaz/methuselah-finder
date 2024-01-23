@@ -1,8 +1,15 @@
 import { Simulation } from "@/simulation/simulation";
 import { Chromosome, chromosomeSize, generateChromosome } from "./chromosome";
 import config from "@/config.json";
+import { randomRange } from "@/mathUtil";
 
 type ChromosomeResult = [Chromosome, number];
+type NTuple<
+    N extends number,
+    Accumulator extends Chromosome[] = [],
+> = Accumulator['length'] extends N
+    ? Accumulator
+    : NTuple<N, [...Accumulator, Chromosome]>;
 
 export async function createGeneration() {
     const chromosomes = await Promise.all(
@@ -44,7 +51,7 @@ export async function crossoverGeneration(generation: ChromosomeResult[]) {
     const children = await Promise.all(
         Array.from({ length: crossoverChildrenCount })
             .map(() => {
-                const parents = selectParents(probabilityLimits);
+                const parents = selectParents(probabilityLimits, 2);
                 const child = crossover(parents);
                 return tryMutate(child);
             })
@@ -73,20 +80,16 @@ function tryMutate(chromosome: Chromosome) {
     return chromosome;
 }
 
-function crossover(parents: Chromosome[]) {
-    const chunkSize = BigInt(chromosomeSize / parents.length);
-    let mask = (1n << chunkSize) - 1n;
-    let out = BigInt(0);
-    parents.forEach((parent) => {
-        out <<= chunkSize;
-        out |= (parent & mask);
+function crossover([parent1, parent2]: [Chromosome, Chromosome]) {
+    const cutoff = BigInt(randomRange(1, chromosomeSize - 1));
+    const mask = (1n << cutoff) - 1n;
 
-        mask <<= chunkSize;
-    })
-    return out;
+    return parent1 | (parent2 & mask);
 }
 
-function selectParents(probabilities: Array<[number, Chromosome]>, count: number = 2) {
+function selectParents<
+    T extends number
+>(probabilities: Array<[number, Chromosome]>, count: T): NTuple<T> {
     // assumes probabilities are sorted, uses roulette selection
     const out: Chromosome[] = [];
     for (let parentIndex = 0; parentIndex < count; ++parentIndex) {
@@ -103,5 +106,5 @@ function selectParents(probabilities: Array<[number, Chromosome]>, count: number
         }
     }
 
-    return out;
+    return out as NTuple<T>;
 }
