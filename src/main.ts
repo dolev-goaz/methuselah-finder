@@ -13,7 +13,7 @@ let msPerStep = 0;
 setupControls({
   step: step,
   onChangeSize: updateMapSize,
-  onChangeSpeed: (ms) => msPerStep = 5000,
+  onChangeSpeed: (ms) => msPerStep = ms,
   onRun: runSimulation,
 });
 
