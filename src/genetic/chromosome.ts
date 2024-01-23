@@ -37,3 +37,12 @@ export function isInitialCellAlive(chromosome: Chromosome, positionX: number, po
     const index = BigInt(positionY * config.InitialChromosome.MaxWidth + positionX);
     return Boolean(chromosome & (1n << index));
 }
+
+export function howManyLivingCells(chromosome: Chromosome) {
+    let sum = 0;
+    for (let i = 0n; i < chromosomeSize; i++) {
+        const isAlive = Boolean(chromosome & (1n  << i));
+        sum += Number(isAlive);
+    }
+    return sum;
+}

@@ -1,4 +1,4 @@
-import { Chromosome, isInitialCellAlive } from "@/genetic/chromosome";
+import { Chromosome, howManyLivingCells, isInitialCellAlive } from "@/genetic/chromosome";
 import { Cell, StepData, createCell } from "./cell";
 import config from "@/config.json";
 
@@ -17,6 +17,7 @@ export class Simulation {
     statistics: Statistics;
     states: Chromosome[] = [];
     maxSize: number = 0;
+    initialSize: number;
 
     constructor(chromosome: Chromosome) {
         this.chromosome = chromosome;
@@ -24,6 +25,7 @@ export class Simulation {
 
         this.cells = [];
         this.initializeCells(chromosome);
+        this.initialSize = howManyLivingCells(this.chromosome);
         const currentState = this.calculateState();
         this.states.push(currentState);
 
@@ -88,7 +90,11 @@ export class Simulation {
     }
 
     private calculateStatistics() {
+        const livingCells = this.cells.filter((cell) => cell.currentStepData.alive).length;
+
         this.statistics.Fitness = this.calculateFitness();
+        this.statistics['Initial Size'] = this.initialSize;
+        this.statistics['Current Size'] = livingCells;
         this.statistics['Max Size'] = this.maxSize;
     }
 
