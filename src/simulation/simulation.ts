@@ -56,9 +56,9 @@ export class Simulation {
 
         const initialSizeFactor = 20 * ratioMultiplier * (1 / this.initialSize); // INITIAL SIZE
 
-        const ageFactor = Math.sqrt(this.step); // AGE
+        const lifespanFactor = 200 * (this.step / config.SimulationMaxSteps); // LIFE SPAN
 
-        return maxSizeFactor + initialSizeFactor + ageFactor;
+        return maxSizeFactor + initialSizeFactor + lifespanFactor;
     }
 
     moveNextGen() {
