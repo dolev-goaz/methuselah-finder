@@ -2,7 +2,7 @@ import config from "@/config.json"
 
 export type Chromosome = bigint;
 
-const chromosomeSize = config.InitialChromosome.MaxWidth * config.InitialChromosome.MaxHeight;
+export const chromosomeSize = config.InitialChromosome.MaxWidth * config.InitialChromosome.MaxHeight;
 
 const xLimits = [
     Math.floor((config.CellsInRow - config.InitialChromosome.MaxWidth) / 2),

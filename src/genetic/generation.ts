@@ -1,9 +1,8 @@
 import { Simulation } from "@/simulation/simulation";
-import { Chromosome, generateChromosome } from "./chromosome";
+import { Chromosome, chromosomeSize, generateChromosome } from "./chromosome";
 import config from "@/config.json";
 
 type ChromosomeResult = [Chromosome, number];
-const chromosomeSize = config.InitialChromosome.MaxWidth * config.InitialChromosome.MaxHeight;
 
 export async function createGeneration() {
     return Promise.all(Array.from({ length: config.PopulationSize }).map(generateChromosome));
@@ -59,7 +58,7 @@ export async function crossoverGeneration(generation: ChromosomeResult[]) {
         ...bestCopies,
         ...varianceChildren,
         ...children
-    ];
+    ].filter(Boolean); // non-zero children
 }
 
 function tryMutate(chromosome: Chromosome) {
