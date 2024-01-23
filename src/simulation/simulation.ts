@@ -16,6 +16,7 @@ export class Simulation {
 
     statistics: Statistics;
     states: Chromosome[] = [];
+    maxSize: number = 0;
 
     constructor(chromosome: Chromosome) {
         this.chromosome = chromosome;
@@ -42,11 +43,13 @@ export class Simulation {
     }
 
     calculateFitness() {
-        // const currentSize = this.calculateSize();
         const livingCells = this.cells.filter((cell) => cell.currentStepData.alive).length;
+        this.maxSize = Math.max(this.maxSize, livingCells);
         const maxLivingCells = config.CellsInRow * config.CellsInColumn;
-        const ratio = livingCells / maxLivingCells;
-        return 200 * ratio + Math.sqrt(this.step);
+
+        const ratio = this.maxSize / maxLivingCells;
+        const multiplier = this.isStabilized()? 200: 0;
+        return ratio * multiplier + Math.sqrt(this.step);
     }
 
     moveNextGen() {
@@ -86,6 +89,7 @@ export class Simulation {
 
     private calculateStatistics() {
         this.statistics.Fitness = this.calculateFitness();
+        this.statistics['Max Size'] = this.maxSize;
     }
 
     private moveCellNextGen(cell: Cell) {
