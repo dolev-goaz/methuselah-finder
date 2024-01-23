@@ -2,7 +2,7 @@ import { Chromosome, howManyLivingCells, isInitialCellAlive } from "@/genetic/ch
 import { Cell, StepData, createCell } from "./cell";
 import config from "@/config.json";
 
-export type Statistics = Record<string, string | number>;
+export type Statistics = Record<string, string | number | bigint>;
 
 export class Simulation {
 
@@ -45,6 +45,8 @@ export class Simulation {
     }
 
     calculateFitness() {
+        if (this.initialSize == 0) return 1;
+
         const livingCells = this.cells.filter((cell) => cell.currentStepData.alive).length;
         this.maxSize = Math.max(this.maxSize, livingCells);
         const maxLivingCells = config.CellsInRow * config.CellsInColumn;
@@ -53,7 +55,7 @@ export class Simulation {
         const ratioMultiplier = this.isStabilized() ? 200 : 0;
         const maxSizeFactor = Math.pow(ratio * ratioMultiplier, 2) // MAX SIZE
 
-        const initialSizeFactor = ratioMultiplier / (this.initialSize + 1); // INITIAL SIZE
+        const initialSizeFactor = ratioMultiplier / this.initialSize; // INITIAL SIZE
 
         const ageFactor = Math.sqrt(this.step); // AGE
 
@@ -102,6 +104,7 @@ export class Simulation {
         this.statistics['Initial Size'] = this.initialSize;
         this.statistics['Current Size'] = livingCells;
         this.statistics['Max Size'] = this.maxSize;
+        this.statistics.Chromosome = this.chromosome;
     }
 
     private moveCellNextGen(cell: Cell) {
