@@ -49,7 +49,7 @@ export class Simulation {
 
         const ratio = this.maxSize / maxLivingCells;
         const multiplier = this.isStabilized()? 200: 0;
-        return ratio * multiplier + Math.sqrt(this.step);
+        return Math.pow(ratio * multiplier, 2) + Math.sqrt(this.step);
     }
 
     moveNextGen() {
