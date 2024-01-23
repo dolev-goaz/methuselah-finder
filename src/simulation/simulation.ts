@@ -50,8 +50,14 @@ export class Simulation {
         const maxLivingCells = config.CellsInRow * config.CellsInColumn;
 
         const ratio = this.maxSize / maxLivingCells;
-        const multiplier = this.isStabilized()? 200: 0;
-        return Math.pow(ratio * multiplier, 2) + Math.sqrt(this.step);
+        const ratioMultiplier = this.isStabilized() ? 200 : 0;
+        const maxSizeFactor = Math.pow(ratio * ratioMultiplier, 2) // MAX SIZE
+
+        const initialSizeFactor = ratioMultiplier / (this.initialSize + 1); // INITIAL SIZE
+
+        const ageFactor = Math.sqrt(this.step); // AGE
+
+        return maxSizeFactor + initialSizeFactor + ageFactor;
     }
 
     moveNextGen() {
