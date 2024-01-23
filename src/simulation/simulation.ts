@@ -45,17 +45,16 @@ export class Simulation {
     }
 
     calculateFitness() {
-        if (this.initialSize == 0) return 1;
 
         const livingCells = this.cells.filter((cell) => cell.currentStepData.alive).length;
         this.maxSize = Math.max(this.maxSize, livingCells);
         const maxLivingCells = config.CellsInRow * config.CellsInColumn;
 
         const ratio = this.maxSize / maxLivingCells;
-        const ratioMultiplier = this.isStabilized() ? 200 : 0;
-        const maxSizeFactor = Math.pow(ratio * ratioMultiplier, 2) // MAX SIZE
+        const ratioMultiplier = Number(this.isStabilized());
+        const maxSizeFactor = Math.pow(200 * ratioMultiplier * ratio, 2) // MAX SIZE
 
-        const initialSizeFactor = ratioMultiplier / this.initialSize; // INITIAL SIZE
+        const initialSizeFactor = 20 * ratioMultiplier * (1 / this.initialSize); // INITIAL SIZE
 
         const ageFactor = Math.sqrt(this.step); // AGE
 
