@@ -5,7 +5,12 @@ import config from "@/config.json";
 type ChromosomeResult = [Chromosome, number];
 
 export async function createGeneration() {
-    return Promise.all(Array.from({ length: config.PopulationSize }).map(generateChromosome));
+    const chromosomes = await Promise.all(
+        Array.from({ length: config.PopulationSize })
+            .map(generateChromosome)
+    );
+
+    return chromosomes.filter(Boolean); // non-zero chromosomes
 }
 
 export async function runGeneration(chromosomes: Chromosome[]): Promise<ChromosomeResult[]> {
@@ -46,7 +51,7 @@ export async function crossoverGeneration(generation: ChromosomeResult[]) {
     );
 
     const bestChromosome = generation.reduce((bestRes, currentRes) => bestRes[1] > currentRes[1] ? bestRes : currentRes);
-    const bestCopies = Array.from({length: config.BestPromotionCount}).map(() => bestChromosome[0]);
+    const bestCopies = Array.from({ length: config.BestPromotionCount }).map(() => bestChromosome[0]);
 
     const varianceChildren = await Promise.all(
         Array.from({ length: config.NewVariancePopulationCount })
