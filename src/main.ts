@@ -13,7 +13,7 @@ let msPerStep = 0;
 setupControls({
   step: step,
   onChangeSize: updateMapSize,
-  onChangeSpeed: (ms) => msPerStep = ms,
+  onChangeSpeed: (ms) => msPerStep = 5000,
   onRun: runSimulation,
 });
 
@@ -43,7 +43,7 @@ simulationWorker.onmessage = ({ data }: MessageEvent<WorkerOutput>) => {
 async function handleResult(chromosome: Chromosome) {
   document.querySelector<HTMLDivElement>("#simulation-container")!.hidden = false;
   document.querySelector<HTMLDivElement>("#simulation-progress")!.hidden = true;
-  simulationWithVisuals = new Simulation(config.CellsInRow, config.CellsInColumn, chromosome);
+  simulationWithVisuals = new Simulation(chromosome);
 
   simulationMap.draw(simulationWithVisuals);
   await sleep(msPerStep);

@@ -11,11 +11,7 @@ export async function createGeneration() {
 
 export async function runGeneration(chromosomes: Chromosome[]): Promise<ChromosomeResult[]> {
     const simulations = chromosomes.map(async (chromosome) => {
-        const simulation = new Simulation(
-            config.CellsInRow,
-            config.CellsInColumn,
-            chromosome
-        );
+        const simulation = new Simulation(chromosome);
         simulation.runSimulation();
 
         return [simulation.chromosome, simulation.calculateFitness()] as [Chromosome, number];

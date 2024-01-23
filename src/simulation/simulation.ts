@@ -11,20 +11,16 @@ export class Simulation {
     cellNeighbors: Map<Cell, Cell[]> = new Map();
 
     cells: Cell[];
-    gridWidth: number;
-    gridHeight: number;
 
     step: number;
 
     statistics: Statistics;
     states: Chromosome[] = [];
 
-    constructor(width: number, height: number, chromosome: Chromosome) {
+    constructor(chromosome: Chromosome) {
         this.chromosome = chromosome;
         this.step = 0;
 
-        this.gridWidth = width;
-        this.gridHeight = height;
         this.cells = [];
         this.initializeCells(chromosome);
         const currentState = this.calculateState();
@@ -48,7 +44,7 @@ export class Simulation {
     calculateFitness() {
         // const currentSize = this.calculateSize();
         const livingCells = this.cells.filter((cell) => cell.currentStepData.alive).length;
-        const maxLivingCells = this.gridWidth * this.gridHeight;
+        const maxLivingCells = config.CellsInRow * config.CellsInColumn;
         const ratio = livingCells / maxLivingCells;
         return 200 * ratio + Math.sqrt(this.step);
     }
@@ -75,8 +71,8 @@ export class Simulation {
 
     private initializeCells(chromosome: Chromosome) {
         this.cells.length = 0;
-        for (let yIndex = 0; yIndex < this.gridHeight; ++yIndex) {
-            for (let xIndex = 0; xIndex < this.gridWidth; ++xIndex) {
+        for (let yIndex = 0; yIndex < config.CellsInColumn; ++yIndex) {
+            for (let xIndex = 0; xIndex < config.CellsInRow; ++xIndex) {
                 const newCell = createCell(xIndex, yIndex, isInitialCellAlive(chromosome, xIndex, yIndex));
                 this.cells.push(newCell);
             }
@@ -139,10 +135,10 @@ export class Simulation {
      */
     private getNeighbor(cell: Cell, [dx, dy]: [number, number]) {
         const xIndex = (cell.indexX + dx);
-        if (xIndex < 0 || xIndex >= this.gridWidth) return undefined;
+        if (xIndex < 0 || xIndex >= config.CellsInRow) return undefined;
         const yIndex = (cell.indexY + dy);
-        if (yIndex < 0 || yIndex >= this.gridHeight) return undefined;
+        if (yIndex < 0 || yIndex >= config.CellsInColumn) return undefined;
 
-        return this.cells[yIndex * this.gridWidth + xIndex];
+        return this.cells[yIndex * config.CellsInRow + xIndex];
     }
 }
