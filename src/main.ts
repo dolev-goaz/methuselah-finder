@@ -4,6 +4,7 @@ import { setupControls } from "./controls";
 import { SimulationMap } from "./simulation/simulationMap";
 import type { WorkerOutput, WorkerOutputObject } from "./simulation/worker";
 import { Chromosome } from "./genetic/chromosome";
+import { sleep } from "./utils";
 
 const simulationWorker = new Worker(new URL('./simulation/worker.ts', import.meta.url), {
   type: 'module'
@@ -90,8 +91,4 @@ function step() {
 function updateMapSize(cellSize: number) {
   simulationMap.setCellSizeMultiplier(cellSize);
   simulationMap.draw(simulationWithVisuals);
-}
-
-async function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }

@@ -9,7 +9,8 @@ type ControlsData = {
 }
 
 export function setupControls(options: ControlsData) {
-    createLoopControls(options.onRun, options.onChangeSpeed);
+    createRunButton(options.onRun);
+    createLoopControls(options.onChangeSpeed);
     createStepButton(options.step);
     createGridSizeControl(options.onChangeSize);
 }
@@ -24,7 +25,7 @@ function createGridSizeControl(onChange: fn<[number]>) {
     }
 }
 
-function createLoopControls(onRun: fn, onSpeedChange: fn<[number]>) {
+function createLoopControls(onSpeedChange: fn<[number]>) {
     const initialSliderValue = config.InitialStepsPerSecond;
     let timePerFrame = 1000 / initialSliderValue;
     onSpeedChange(timePerFrame);
@@ -45,7 +46,9 @@ function createLoopControls(onRun: fn, onSpeedChange: fn<[number]>) {
         sliderLabel.innerText = `steps per second- ${slider.value}`;
         onSpeedChange(timePerFrame);
     };
+}
 
+function createRunButton(onRun: fn) {
     const runButton = document.querySelector<HTMLInputElement>("button[type=button]#start")!;
     runButton.onclick = () => {
         runButton.hidden = true;
