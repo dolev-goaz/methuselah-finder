@@ -5,10 +5,12 @@ type ControlsData = {
     step: fn;
     onChangeSize: fn<[number]>;
     onChangeSpeed: fn<[number]>;
+    onCalculate: fn;
     onRun: fn;
 }
 
 export function setupControls(options: ControlsData) {
+    createCalculateButton(options.onCalculate);
     createRunButton(options.onRun);
     createLoopControls(options.onChangeSpeed);
     createStepButton(options.step);
@@ -48,12 +50,22 @@ function createLoopControls(onSpeedChange: fn<[number]>) {
     };
 }
 
-function createRunButton(onRun: fn) {
-    const runButton = document.querySelector<HTMLInputElement>("button[type=button]#start")!;
-    runButton.onclick = () => {
-        runButton.hidden = true;
-        onRun();
+function createCalculateButton(onStart: fn) {
+    const calculateButton = document.querySelector<HTMLInputElement>("button[type=button]#start-algorithm")!;
+    const startButton = document.querySelector<HTMLInputElement>("button[type=button]#start-simulation")!;
+    calculateButton.onclick = () => {
+        calculateButton.hidden = true;
+        startButton.hidden = false;
+        onStart();
     };
+}
+
+function createRunButton(onRun: fn) {
+    const startButton = document.querySelector<HTMLInputElement>("button[type=button]#start-simulation")!;
+    startButton.onclick = () => {
+        onRun();
+        startButton.hidden = true;
+    }
 }
 
 function createStepButton(stepMethod: fn) {

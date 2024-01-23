@@ -15,6 +15,7 @@ setupControls({
   step: step,
   onChangeSize: updateMapSize,
   onChangeSpeed: (ms) => msPerStep = ms,
+  onCalculate: runGeneticAlgorithm,
   onRun: runSimulation,
 });
 
@@ -41,18 +42,21 @@ simulationWorker.onmessage = ({ data }: MessageEvent<WorkerOutput>) => {
   }
 }
 
-async function handleResult(chromosome: Chromosome) {
+function handleResult(chromosome: Chromosome) {
   document.querySelector<HTMLDivElement>("#simulation-container")!.hidden = false;
   document.querySelector<HTMLDivElement>("#simulation-progress")!.hidden = true;
+  document.querySelector<HTMLButtonElement>("#start-simulation")!.disabled = false;
   simulationWithVisuals = new Simulation(chromosome);
-
   simulationMap.draw(simulationWithVisuals);
-  await sleep(msPerStep);
+}
+
+async function runSimulation() {
   while (!simulationWithVisuals.isStabilized()) {
     if (simulationWithVisuals.step == config.SimulationMaxSteps) alert("timed out!")
     step();
     await sleep(msPerStep);
   }
+
 }
 
 const fitnessHistory: number[] = [];
@@ -62,7 +66,7 @@ function handleProgress(progress: WorkerOutputObject['progress']) {
   if (fitnessHistory.indexOf(fitnessRounded) == -1) {
     fitnessHistory.push(fitnessRounded);
     document.querySelector("#simulation-progress #fitness-history")!
-      .innerHTML = JSON.stringify(fitnessHistory, null, 2) + 
+      .innerHTML = JSON.stringify(fitnessHistory, null, 2) +
       ` (${fitnessHistory.length} total)`;
   }
 
@@ -76,7 +80,7 @@ function handleProgress(progress: WorkerOutputObject['progress']) {
 }
 
 
-function runSimulation() {
+function runGeneticAlgorithm() {
   document.querySelector<HTMLDivElement>("#simulation-progress")!.hidden = false;
   document.querySelector<HTMLSpanElement>("#simulation-progress #total-generations")!
     .innerHTML = config.GenerationCount.toString();
