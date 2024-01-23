@@ -48,7 +48,12 @@ export class SimulationMap {
     }
 
     private drawStatistics(statistics: Statistics) {
-        const text = Object.entries(statistics).map(([key, value]) => `${key}: ${value}.`).join('\n')
+        const text = Object.entries(statistics).map(([key, value]) => {
+            const valueStr = typeof value === 'number'
+            ? (Math.round(value * 100) / 100)
+            : value.toString();
+            return `${key}: ${valueStr}.`
+        }).join('\n')
         const statisticsContainer = document.querySelector<HTMLDivElement>('#statistics-container')!;
         statisticsContainer.hidden = false;
         const statisticsData = statisticsContainer.querySelector<HTMLParagraphElement>('p#statistics')!;
