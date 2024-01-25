@@ -5,10 +5,10 @@
     "StepSize": 100,
     "Initial": 700
   },
-  "CellsInRow": 50,
-  "CellsInColumn": 50,
+  "CellsInRow": 100,
+  "CellsInColumn": 100,
 
-  "SimulationMaxSteps": 200,
+  "SimulationMaxSteps": 500,
   "PopulationSize": 30,
   "GenerationCount": 200,
   "MutationChance": 0.6,
@@ -18,8 +18,10 @@
 
   "InitialChromosome": {
     "CellLivingChance": 0.2,
-    "MaxWidth": 6,
-    "MaxHeight": 6
+    "MaxWidth": 10,
+    "MaxHeight": 10
   },
-  "InitialStepsPerSecond": 20
+  "InitialStepsPerSecond": 20,
+
+  "ParallelWorkerCount": 10
 }

@@ -2,13 +2,12 @@ import { Simulation } from "./simulation/simulation";
 import config from "./config.json";
 import { setupControls } from "./controls";
 import { SimulationMap } from "./simulation/simulationMap";
-import type { WorkerOutput, WorkerOutputObject } from "./simulation/worker";
+import type { WorkerOutput, WorkerOutputObject } from "./simulation/generationWorker";
 import { Chromosome } from "./genetic/chromosome";
 import { sleep } from "./utils";
 
-const simulationWorker = new Worker(new URL('./simulation/worker.ts', import.meta.url), {
-  type: 'module'
-})
+import SimulationWorker from './simulation/generationWorker?worker';
+const simulationWorker = new SimulationWorker();
 
 let msPerStep = 0;
 setupControls({
@@ -31,10 +30,12 @@ simulationWorker.onmessage = ({ data }: MessageEvent<WorkerOutput>) => {
       break;
     }
     case 'result': {
+      simulationWorker.terminate();
       handleResult(data.innerData);
       break;
     }
     default: {
+      simulationWorker.terminate();
       alert("Unhandled message type");
       throw Error("Unhandled message type");
     }

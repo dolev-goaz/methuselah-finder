@@ -1,9 +1,11 @@
-import { Simulation } from "@/simulation/simulation";
 import { Chromosome, chromosomeSize, generateChromosome } from "./chromosome";
 import config from "@/config.json";
 import { randomRange } from "@/mathUtil";
+import ChromosomeWorker from "@/simulation/chromosomeWorker?worker";
+import { WorkerOutput, type WorkerInput } from "@/simulation/chromosomeWorker";
+import { splitBatches } from "@/utils";
 
-type ChromosomeResult = [Chromosome, number];
+export type ChromosomeResult = [Chromosome, number];
 type NTuple<
     N extends number,
     Accumulator extends Chromosome[] = [],
@@ -21,13 +23,25 @@ export async function createGeneration() {
 }
 
 export async function runGeneration(chromosomes: Chromosome[]): Promise<ChromosomeResult[]> {
-    const simulations = chromosomes.map(async (chromosome) => {
-        const simulation = new Simulation(chromosome);
-        simulation.runSimulation();
+    const batches = splitBatches(chromosomes, config.ParallelWorkerCount);
+    const simulations = batches.map((batch, i) => {
+        return new Promise<ChromosomeResult[]>((resolve) => {
+            const worker = new ChromosomeWorker();
+            worker.postMessage({
+                type: 'start',
+                innerData: batch
+            } as WorkerInput);
+            worker.onmessage = ({ data }: MessageEvent<WorkerOutput>) => {
+                if (data.type == 'result') {
+                    worker.terminate();
+                    resolve(data.innerData);
+                }
+            };
+        });
 
-        return [simulation.chromosome, simulation.calculateFitness()] as [Chromosome, number];
     });
-    return Promise.all(simulations);
+    const result = await Promise.all(simulations);
+    return result.flat();
 }
 
 export async function crossoverGeneration(generation: ChromosomeResult[]) {
