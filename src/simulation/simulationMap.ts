@@ -7,11 +7,11 @@ export class SimulationMap {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
 
-    private gridWidth: number;
+    private gridLongestSide: number;
     private stepCountHeader: HTMLElement;
 
     constructor() {
-        this.gridWidth = config.GridSize.Initial;
+        this.gridLongestSide = config.GridSize.Initial;
         const htmlElements = this.initializeMapHTML();
         if (!htmlElements) {
             alert("Error");
@@ -26,10 +26,15 @@ export class SimulationMap {
     }
 
     setGridSize(size: number) {
-        this.gridWidth = size;
-
-        this.canvas.width = this.gridWidth;
-        this.canvas.height = (this.gridWidth / config.CellsInRow) * config.CellsInColumn;
+        this.gridLongestSide = size;
+        if (config.CellsInRow > config.CellsInColumn) {
+            this.canvas.width = this.gridLongestSide;
+            this.canvas.height = (this.gridLongestSide / config.CellsInRow) * config.CellsInColumn;
+        } else {
+            this.canvas.width = (this.gridLongestSide / config.CellsInColumn) * config.CellsInRow;
+            this.canvas.height = this.gridLongestSide;
+        }
+        
     }
 
     private drawCell(cell: Cell) {
@@ -37,7 +42,11 @@ export class SimulationMap {
     }
 
     get cellSize() {
-        return this.gridWidth / config.CellsInRow;
+        if (config.CellsInRow > config.CellsInColumn) {
+            return this.gridLongestSide / config.CellsInRow;
+        }
+
+        return this.gridLongestSide / config.CellsInColumn;
     }
 
     draw(simulation: Simulation) {
