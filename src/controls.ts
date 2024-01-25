@@ -19,9 +19,11 @@ export function setupControls(options: ControlsData) {
 
 function createGridSizeControl(onChange: fn<[number]>) {
     const size = document.querySelector<HTMLInputElement>('input#grid-size')!;
-    size.value = config.CellSize.Initial.toString();
-    size.min = config.CellSize.Min.toString();
-    size.max = config.CellSize.Max.toString();
+    const range = (config.GridSize.Max - config.GridSize.Min) / config.GridSize.StepSize;
+    const initial = (config.GridSize.Initial - config.GridSize.Min) / config.GridSize.StepSize
+    size.value = initial.toString();
+    size.min = "0";
+    size.max = range.toString();
     size.oninput = () => {
         onChange(parseInt(size.value));
     }

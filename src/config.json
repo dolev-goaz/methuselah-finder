@@ -1,9 +1,9 @@
 {
-  "CellSize": {
-    "Min": 2,
-    "Max": 6,
-    "Initial": 5,
-    "Multiplier": 3
+  "GridSize": {
+    "Min": 500,
+    "Max": 1000,
+    "StepSize": 100,
+    "Initial": 700
   },
   "CellsInRow": 50,
   "CellsInColumn": 50,

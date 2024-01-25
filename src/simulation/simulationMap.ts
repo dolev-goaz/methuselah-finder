@@ -7,11 +7,11 @@ export class SimulationMap {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
 
-    private cellSizeMultiplier: number;
+    private gridWidth: number;
     private stepCountHeader: HTMLElement;
 
     constructor() {
-        this.cellSizeMultiplier = config.CellSize.Initial;
+        this.gridWidth = config.GridSize.Initial;
         const htmlElements = this.initializeMapHTML();
         if (!htmlElements) {
             alert("Error");
@@ -25,11 +25,11 @@ export class SimulationMap {
         this.ctx = ctx;
     }
 
-    setCellSizeMultiplier(multiplier: number) {
-        this.cellSizeMultiplier = multiplier;
+    setGridSize(size: number) {
+        this.gridWidth = size;
 
-        this.canvas.width = this.cellSize * config.CellsInRow;
-        this.canvas.height = this.cellSize * config.CellsInColumn;
+        this.canvas.width = this.gridWidth;
+        this.canvas.height = (this.gridWidth / config.CellsInRow) * config.CellsInColumn;
     }
 
     private drawCell(cell: Cell) {
@@ -37,7 +37,7 @@ export class SimulationMap {
     }
 
     get cellSize() {
-        return this.cellSizeMultiplier * config.CellSize.Multiplier;
+        return this.gridWidth / config.CellsInRow;
     }
 
     draw(simulation: Simulation) {

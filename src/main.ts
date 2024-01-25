@@ -92,7 +92,8 @@ function step() {
   simulationWithVisuals.moveNextGen();
   simulationMap.draw(simulationWithVisuals);
 }
-function updateMapSize(cellSize: number) {
-  simulationMap.setCellSizeMultiplier(cellSize);
+function updateMapSize(gridSizeStep: number) {
+  const gridSize = config.GridSize.Min + gridSizeStep * config.GridSize.StepSize
+  simulationMap.setGridSize(gridSize);
   simulationMap.draw(simulationWithVisuals);
 }
