@@ -49,6 +49,7 @@ function addProgressRow(sheet: ExcelJS.Worksheet, row: WorkerOutputObject['progr
     newRow.chromosomeStr = row.chromosome
         .toString(2)
         .padStart(chromosomeSize, '0')
+        .split('').reverse().join('') // reverse
         .replace(/0/g, '□')
         .replace(/1/g, '■')
         .match(new RegExp(`.{${config.InitialChromosome.MaxWidth}}`, 'g'))!.join('\n');
