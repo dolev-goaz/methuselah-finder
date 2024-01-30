@@ -24,7 +24,7 @@ export async function createGeneration() {
 
 export async function runGeneration(chromosomes: Chromosome[]): Promise<ChromosomeResult[]> {
     const batches = splitBatches(chromosomes, config.ParallelWorkerCount);
-    const simulations = batches.map((batch, i) => {
+    const simulations = batches.map((batch) => {
         return new Promise<ChromosomeResult[]>((resolve) => {
             const worker = new ChromosomeWorker();
             worker.postMessage({
