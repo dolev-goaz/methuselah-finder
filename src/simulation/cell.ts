@@ -1,4 +1,4 @@
-const cellBorderThickness = 1;
+const cellBorderThickness = 0.25;
 
 type DrawData = {
     drawX: number;
