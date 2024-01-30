@@ -8,6 +8,7 @@ export type WorkerOutputObject = {
     progress: {
         generation: number;
         maxFitness: number;
+        chromosome: Chromosome;
     }
 }
 
@@ -23,7 +24,12 @@ async function runGeneticAlgorithm() {
     for (let genIndex = 0; genIndex < config.GenerationCount; ++genIndex) {
         const simulations = await runGeneration(generation);
         const max = Math.max(...simulations.map((simulation) => simulation[1]));
-        myPostMessage('progress', { generation: genIndex + 1, maxFitness: max });
+        const best = simulations.find((simulation) => simulation[1] == max)!;
+        myPostMessage('progress', {
+            generation: genIndex + 1,
+            chromosome: best[0],
+            maxFitness: best[1],
+        });
         generation = await crossoverGeneration(simulations);
     }
 

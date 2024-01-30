@@ -60,15 +60,16 @@ async function runSimulation() {
 
 }
 
-const fitnessHistory: number[] = [];
+const fitnessHistory: Array<WorkerOutputObject['progress']> = [];
 
 function handleProgress(progress: WorkerOutputObject['progress']) {
   const fitnessRounded = parseFloat(progress.maxFitness.toFixed(3));
-  if (fitnessHistory.indexOf(fitnessRounded) == -1) {
-    fitnessHistory.push(fitnessRounded);
+  if (fitnessHistory.findIndex((item) => item.maxFitness == fitnessRounded) == -1) {
+    fitnessHistory.push({ chromosome: progress.chromosome, generation: progress.generation, maxFitness: fitnessRounded });
+    const fitnesses = fitnessHistory.map((fitnessItem) => fitnessItem.maxFitness)
+    const str = JSON.stringify(fitnesses, null, '\t');
     document.querySelector("#simulation-progress #fitness-history")!
-      .innerHTML = JSON.stringify(fitnessHistory, null, 2) +
-      ` (${fitnessHistory.length} total)`;
+      .innerHTML = str + ` (${fitnessHistory.length} total)`;
   }
 
 
