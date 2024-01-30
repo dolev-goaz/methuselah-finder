@@ -7,6 +7,7 @@ import { Chromosome } from "./genetic/chromosome";
 import { sleep } from "./utils";
 
 import SimulationWorker from './simulation/generationWorker?worker';
+import { writeSpreadSheet } from "./spreadsheet";
 const simulationWorker = new SimulationWorker();
 
 let msPerStep = 0;
@@ -16,6 +17,7 @@ setupControls({
   onChangeSpeed: (ms) => msPerStep = ms,
   onCalculate: runGeneticAlgorithm,
   onRun: runSimulation,
+  spreadSheetExport: () => writeSpreadSheet(fitnessHistory)
 });
 
 

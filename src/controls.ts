@@ -7,14 +7,22 @@ type ControlsData = {
     onChangeSpeed: fn<[number]>;
     onCalculate: fn;
     onRun: fn;
+    spreadSheetExport: fn;
 }
 
 export function setupControls(options: ControlsData) {
+    createExport(options.spreadSheetExport);
     createCalculateButton(options.onCalculate);
     createRunButton(options.onRun);
     createLoopControls(options.onChangeSpeed);
     createStepButton(options.step);
     createGridSizeControl(options.onChangeSize);
+}
+
+function createExport(exportMethod: fn) {
+    const button = document.querySelector<HTMLButtonElement>('button#export-excel')
+    if (!button) return;
+    button.onclick = exportMethod;
 }
 
 function createGridSizeControl(onChange: fn<[number]>) {
