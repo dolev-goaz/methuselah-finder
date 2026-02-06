@@ -81,3 +81,13 @@ You can configure the genetic algorithm parameters in the `src/config.json` file
 }
 ```
 
+## Examples
+
+### Evolutionary Algorithm
+
+https://github.com/user-attachments/assets/668f458a-fe38-48e0-94be-74b42e1ae2e5
+
+### Simulation
+
+https://github.com/user-attachments/assets/67c978d0-bd40-47b3-b745-9be812f6cd13
+
